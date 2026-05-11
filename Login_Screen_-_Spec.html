@@ -1,0 +1,1138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Login — Coach Claude</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+<link rel="manifest" href="favicon/site.webmanifest" />
+<meta name="theme-color" content="#0d6f7a" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --paper:        hsl(42 30% 96%);
+    --paper-soft:   hsl(42 30% 98%);
+    --paper-deep:   hsl(40 30% 92%);
+    --ink:          #2e2620;
+    --ink-soft:     #3f3428;
+    --ink-mute:     #5a4e3e;
+    --ink-quiet:    #8a7a64;
+    --line:         #d4c3a0;
+    --line-soft:    #e0d4b8;
+    --teal:         #0d6f7a;
+    --teal-deep:    #0a5860;
+    --teal-50:      #e6f5f6;
+    --teal-100:     #ccebee;
+    --teal-200:     #99d6dd;
+    --teal-300:     #5cbcc5;
+    --teal-700:     #095a64;
+    --gold:         #ca8a04;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1280px; margin: 0 auto; padding: 56px 48px 100px; }
+
+  /* spec doc header */
+  .doc-eyebrow { font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-quiet); margin-bottom:14px; }
+  .doc-h { font-family:'Newsreader',serif; font-size:48px; font-weight:500; letter-spacing:-0.025em; line-height:1.05; margin:0 0 16px; color:var(--ink); }
+  .doc-h em { font-style:italic; color:var(--teal-700); }
+  .doc-lede { font-family:'Newsreader',serif; font-size:18px; font-style:italic; line-height:1.55; color:var(--ink-mute); max-width:720px; margin:0 0 56px; }
+  .doc-lede strong { font-weight:600; font-style:normal; color:var(--ink); }
+
+  /* section */
+  .section { margin-bottom: 88px; }
+  .section-head { padding-bottom: 16px; border-bottom: 2px solid var(--ink); margin-bottom: 28px; }
+  .section-num { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--teal-700); margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+  .section-num .badge { font-family:'JetBrains Mono',monospace; font-size:9.5px; padding:2px 8px; border-radius:999px; background:var(--teal-100); color:var(--teal-700); letter-spacing:0.1em; }
+  .section-num .badge.alt { background:var(--paper-deep); color:var(--ink-mute); }
+  .section-h { font-family:'Newsreader',serif; font-size:32px; font-weight:500; letter-spacing:-0.02em; line-height:1.15; margin:0 0 8px; color:var(--ink); }
+  .section-h em { font-style:italic; color:var(--teal-700); }
+  .section-sub { font-family:'Newsreader',serif; font-style:italic; font-size:16px; line-height:1.55; color:var(--ink-mute); max-width:760px; margin:0; }
+  .section-sub strong { font-style:normal; font-weight:600; color:var(--ink); }
+
+  /* canvas frame */
+  .canvas { background: var(--paper-soft); border: 1px dashed var(--line); border-radius: 6px; padding: 28px; margin: 16px 0 8px; position: relative; }
+  .canvas-label { position:absolute; top:-10px; left:18px; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-quiet); background:var(--paper); padding:0 10px; }
+  .canvas-label .pill { background:var(--teal); color:#fff; padding:1px 6px; border-radius:3px; margin-left:6px; }
+  .canvas-label .pill.alt { background:var(--paper-deep); color:var(--ink-mute); }
+
+  /* callouts */
+  .callout { margin:14px 0; padding:14px 18px; background:#fff; border-left:2px solid var(--teal); border-radius:0 6px 6px 0; font-family:'Inter',sans-serif; font-size:13.5px; line-height:1.6; color:var(--ink-soft); border-top:1px solid var(--line-soft); border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .callout .lab { font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--teal-700); margin-bottom:4px; }
+  .callout code { font-family:'JetBrains Mono',monospace; font-size:11.5px; background:var(--paper-deep); padding:1px 5px; border-radius:3px; color:var(--teal-700); }
+
+  /* spec table */
+  .spec-table { margin: 16px 0; background: #fff; border:1px solid var(--line-soft); border-radius:4px; overflow:hidden; font-family:'Inter',sans-serif; font-size:13px; }
+  .spec-table table { width:100%; border-collapse:collapse; }
+  .spec-table th { text-align:left; padding:10px 14px; background:var(--paper-soft); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-quiet); border-bottom:1px solid var(--line-soft); }
+  .spec-table td { padding:11px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-soft); line-height:1.5; }
+  .spec-table tr:last-child td { border-bottom:none; }
+  .spec-table code { font-family:'JetBrains Mono',monospace; font-size:11.5px; background:var(--paper-deep); padding:1px 5px; border-radius:3px; color:var(--teal-700); }
+
+  /* ────────────────────────────────────────
+     LIVE LOGIN — VARIANT A (RECOMMENDED)
+     Editorial split: card left, mission right
+     ──────────────────────────────────────── */
+  .login-stage {
+    background: var(--paper);
+    min-height: 720px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 var(--line), 0 12px 40px -16px rgba(90,70,40,0.18);
+    border: 1px solid var(--line-soft);
+  }
+  .login-stage .left {
+    background: var(--paper);
+    padding: 56px 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .brand-row { display:flex; align-items:center; gap:10px; }
+  .brand-mark {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, var(--teal), var(--teal-deep));
+    color: hsl(42 30% 97%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.04em;
+    box-shadow: 0 2px 8px -2px rgba(13,111,122,0.4);
+  }
+  .brand-name {
+    font-family: 'Newsreader', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .brand-name em { font-style:italic; color: var(--teal-700); }
+
+  .login-card-area { padding: 16px 0; }
+  .login-eyebrow {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; font-weight:700;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color: var(--teal-700);
+    margin-bottom: 14px;
+  }
+  .login-h {
+    font-family:'Newsreader',serif;
+    font-size:36px; font-weight:500;
+    letter-spacing:-0.02em; line-height:1.15;
+    margin:0 0 10px;
+    color: var(--ink);
+  }
+  .login-h em { font-style:italic; color: var(--teal-700); }
+  .login-sub {
+    font-family:'Newsreader',serif;
+    font-size:15.5px; font-style:italic;
+    line-height:1.55; color: var(--ink-mute);
+    margin:0 0 32px; max-width: 380px;
+  }
+  .login-sub strong { font-style:normal; font-weight:600; color: var(--ink); }
+
+  /* OAuth button */
+  .oauth-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgba(90,70,40,0.06);
+    transition: all 0.15s;
+  }
+  .oauth-btn:hover { background: var(--paper-soft); border-color: var(--teal-300); }
+  .oauth-btn svg { width:18px; height:18px; flex-shrink:0; }
+
+  /* divider */
+  .login-divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 22px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-quiet);
+  }
+  .login-divider .line { flex: 1; height: 1px; background: var(--line-soft); }
+
+  /* form */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 6px;
+  }
+  .form-label .tail {
+    float: right;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px; font-weight: 500;
+    letter-spacing: 0; text-transform: none;
+    color: var(--teal-700);
+    cursor: pointer;
+  }
+  .form-input {
+    width: 100%;
+    padding: 11px 14px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+  .form-input::placeholder { color: var(--ink-quiet); }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--teal-300);
+    box-shadow: 0 0 0 3px var(--teal-50);
+  }
+  .form-input.has-tail { padding-right: 44px; }
+  .form-input-wrap { position: relative; }
+  .form-input-tail {
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    color: var(--ink-quiet);
+    cursor: pointer;
+  }
+
+  .form-submit {
+    width: 100%;
+    margin-top: 6px;
+    padding: 12px 16px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px -4px rgba(13,111,122,0.4);
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .form-submit:hover { background: var(--teal-deep); }
+  .form-submit svg { width:14px; height:14px; }
+
+  .login-footer {
+    margin-top: 22px;
+    font-family: 'Newsreader', serif;
+    font-size: 13.5px; font-style: italic;
+    color: var(--ink-mute);
+    text-align: center;
+  }
+  .login-footer a {
+    color: var(--teal-700);
+    text-decoration: none;
+    font-style: normal;
+    font-weight: 500;
+  }
+  .login-footer a:hover { text-decoration: underline; }
+
+  .login-meta {
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    color: var(--ink-quiet);
+  }
+  .login-meta .dot { width: 4px; height: 4px; border-radius: 999px; background: var(--ink-quiet); }
+  .login-meta a { color: var(--ink-quiet); text-decoration: none; }
+  .login-meta a:hover { color: var(--teal-700); }
+
+  /* ── Right pane (editorial) ── */
+  .login-stage .right {
+    background: linear-gradient(135deg, var(--teal-deep) 0%, var(--teal) 60%, var(--teal-700) 100%);
+    color: hsl(42 30% 97%);
+    padding: 56px 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-stage .right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 80% 10%, rgba(255,255,255,0.06) 0%, transparent 50%),
+      radial-gradient(circle at 20% 90%, rgba(255,255,255,0.04) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .right-eyebrow {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; font-weight:700;
+    letter-spacing:0.16em; text-transform:uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .right-quote {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0;
+  }
+  .right-quote-mark {
+    font-family:'Newsreader',serif;
+    font-size: 110px;
+    line-height: 0.6;
+    color: rgba(255,255,255,0.18);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .right-quote-body {
+    font-family:'Newsreader',serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: hsl(42 30% 97%);
+    max-width: 460px;
+  }
+  .right-quote-body em { font-style:italic; color: var(--teal-100); }
+  .right-attribution {
+    font-family:'Newsreader',serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 24px;
+  }
+
+  .right-foot {
+    position: relative;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .right-foot .badge {
+    background: rgba(255,255,255,0.1);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.18);
+    font-size: 9.5px;
+  }
+
+  /* ────────────────────────────────────────
+     VARIANT B — Quiet single card
+     ──────────────────────────────────────── */
+  .login-stage-b {
+    background: var(--paper);
+    min-height: 600px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+    display: flex; align-items: center; justify-content: center;
+    padding: 56px 32px;
+    position: relative;
+  }
+  .login-stage-b::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 50% 30%, rgba(13,111,122,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .login-card-b {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 36px 36px 30px;
+    box-shadow: 0 1px 0 var(--line), 0 8px 24px -10px rgba(90,70,40,0.18);
+    position: relative;
+  }
+  .login-card-b .brand-row { justify-content: center; margin-bottom: 24px; }
+
+  /* ────────────────────────────────────────
+     VARIANT C — Notebook page
+     ──────────────────────────────────────── */
+  .login-stage-c {
+    background: var(--paper);
+    min-height: 720px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+    padding: 64px 48px;
+    position: relative;
+  }
+  .login-stage-c::before {
+    content: '';
+    position: absolute;
+    left: 80px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, #e85a4f 8%, #e85a4f 92%, transparent);
+    opacity: 0.35;
+  }
+  .login-stage-c::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 27px,
+      rgba(212,195,160,0.25) 28px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+  .login-c-content {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 0 0 120px;
+  }
+  .login-c-date {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px; font-weight:700;
+    letter-spacing:0.15em; text-transform:uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 18px;
+  }
+  .login-c-h {
+    font-family: 'Newsreader', serif;
+    font-size: 38px;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .login-c-h em { font-style: italic; color: var(--teal-700); }
+  .login-c-sub {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-mute);
+    margin: 0 0 36px;
+    max-width: 440px;
+  }
+  .login-c-form {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(2px);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 24px 28px 22px;
+    box-shadow: 0 1px 0 var(--line);
+    max-width: 380px;
+  }
+
+  /* ────────────────────────────────────────
+     States: error, loading, success
+     ──────────────────────────────────────── */
+  .state-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .state-frame {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 24px 22px;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .state-frame .frame-label {
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px; font-weight:700;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--ink-quiet);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  /* error treatment */
+  .form-input.error { border-color:#dc2626; box-shadow: 0 0 0 3px #fef2f2; }
+  .form-error {
+    display: flex; gap: 8px; align-items: flex-start;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fef2f2;
+    border-left: 2px solid #dc2626;
+    border-radius: 0 6px 6px 0;
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #991b1b;
+  }
+  .form-error svg { width:14px; height:14px; flex-shrink:0; margin-top:2px; color:#dc2626; }
+
+  /* loading */
+  .form-submit.loading {
+    background: var(--teal-700);
+    cursor: wait;
+  }
+  .form-submit.loading::after {
+    content:'';
+    width:14px; height:14px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: #fff;
+    border-radius:999px;
+    animation: spin 0.7s linear infinite;
+    margin-left: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* magic link sent */
+  .magic-confirm {
+    text-align: center;
+    padding: 32px 16px 16px;
+  }
+  .magic-confirm .icon {
+    width: 48px; height: 48px;
+    border-radius: 999px;
+    background: var(--teal-50);
+    color: var(--teal-700);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .magic-confirm .icon svg { width:22px; height:22px; }
+  .magic-confirm h3 {
+    font-family:'Newsreader',serif;
+    font-size:22px; font-weight:500;
+    letter-spacing:-0.015em;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .magic-confirm p {
+    font-family:'Newsreader',serif;
+    font-style: italic;
+    font-size:14px; line-height:1.55;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* mobile preview */
+  .mobile-frame {
+    width: 320px;
+    background: var(--paper);
+    border: 8px solid #2e2620;
+    border-radius: 32px;
+    padding: 14px 12px 18px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .mobile-frame .mobile-bar-mock {
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* favicon spec block */
+  .favicon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .favicon-tile {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: 0 1px 0 var(--line);
+    text-align: center;
+  }
+  .favicon-tile .preview {
+    background: var(--paper-deep);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+  }
+  .favicon-tile .preview img { display: block; }
+  .favicon-tile .filename {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px; font-weight:600;
+    color: var(--ink-soft);
+    margin-bottom: 2px;
+    word-break: break-all;
+  }
+  .favicon-tile .desc {
+    font-family:'Inter',sans-serif;
+    font-size: 11px;
+    color: var(--ink-quiet);
+    line-height: 1.4;
+  }
+
+  .browser-tab-mock {
+    background: #f1ede2;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px 8px 0 0;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 320px;
+    margin: 0 0 0 0;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .browser-tab-mock img { width:16px; height:16px; }
+  .browser-tab-mock .title {
+    font-family:'Inter',sans-serif;
+    font-size: 12.5px;
+    color: var(--ink);
+    flex: 1;
+  }
+  .browser-tab-mock .x {
+    color: var(--ink-quiet);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .doc-rule { height:1px; background: linear-gradient(90deg, transparent, var(--line), transparent); margin: 72px 0; }
+
+  /* small layout variants for spec table area */
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  @media (max-width: 980px) {
+    .login-stage { grid-template-columns: 1fr; min-height: auto; }
+    .login-stage .right { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- Header -->
+  <div class="doc-eyebrow">Phase 2 · Auth · Apr 2026</div>
+  <h1 class="doc-h">Login screen, <em>annotated</em>.</h1>
+  <p class="doc-lede">Three variants on the same vocabulary — Newsreader serif, parchment, teal, JetBrains Mono labels. <strong>Variant A is the recommended ship target</strong>; B and C are alternates if A feels too marketing-forward. Sign-in methods: Google OAuth + Email + password. Founding cohort is invite-only — no public sign-up affordance, just a small "Need access?" link.</p>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- 01 · VARIANT A — RECOMMENDED                     -->
+  <!-- ════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">01 · Variant A <span class="badge">Recommended ship</span></div>
+      <h2 class="section-h">Editorial split — sign-in left, <em>mission</em> right.</h2>
+      <p class="section-sub">Card-and-context layout. The form stays compact and unfussy on the left; the right pane carries a serif pull-quote in the brand voice and a small "founding cohort" badge. The teal pane plays the role the marketing site would otherwise — coaches landing here for the first time get a sense of what the product is <strong>before</strong> they sign in.</p>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Variant A · sign-in default <span class="pill">Recommended</span></div>
+
+      <div class="login-stage" data-variant="a">
+        <!-- LEFT: form -->
+        <div class="left">
+          <div class="brand-row">
+            <div class="brand-mark">cc</div>
+            <div class="brand-name">Coach Claude</div>
+          </div>
+
+          <div class="login-card-area">
+            <div class="login-eyebrow">Sign in</div>
+            <h2 class="login-h">Welcome back, <em>coach</em>.</h2>
+            <p class="login-sub">Pick up where you left off — your reflections, your patterns, your supervision.</p>
+
+            <button class="oauth-btn">
+              <!-- Google logo -->
+              <svg viewBox="0 0 18 18">
+                <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.27h2.92c1.7-1.57 2.68-3.88 2.68-6.63z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18z"/>
+                <path fill="#FBBC05" d="M3.97 10.71A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.71V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.34z"/>
+                <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.95L3.97 7.3C4.68 5.18 6.66 3.58 9 3.58z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            <div class="login-divider">
+              <div class="line"></div>
+              <span>or</span>
+              <div class="line"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" placeholder="dana@yourcoaching.com" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Password
+                <span class="tail">Forgot?</span>
+              </label>
+              <div class="form-input-wrap">
+                <input class="form-input has-tail" type="password" placeholder="••••••••••••" />
+                <span class="form-input-tail"><i data-lucide="eye-off"></i></span>
+              </div>
+            </div>
+
+            <button class="form-submit">
+              Sign in
+              <i data-lucide="arrow-right"></i>
+            </button>
+
+            <div class="login-footer">
+              Founding cohort is invite-only. <a>Need access?</a>
+            </div>
+          </div>
+
+          <div class="login-meta">
+            <a>Privacy</a>
+            <span class="dot"></span>
+            <a>Terms</a>
+            <span class="dot"></span>
+            <span>Encrypted at rest</span>
+          </div>
+        </div>
+
+        <!-- RIGHT: editorial -->
+        <div class="right">
+          <div class="right-eyebrow">Coach Claude · supervision, paired</div>
+
+          <div class="right-quote">
+            <div class="right-quote-mark">"</div>
+            <div class="right-quote-body">A second pair of <em>eyes</em> on every session — the part of supervision that doesn't fit on the calendar.</div>
+            <div class="right-attribution">— the working brief, drafted Mar 2026</div>
+          </div>
+
+          <div class="right-foot">
+            <span>Apr 2026</span>
+            <span class="badge">Founding cohort</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · brand mark</div>
+      The 36×36 teal tile uses the same Newsreader italic "cc" as the favicon — they're explicitly the same mark at different scales. Tile uses <code>linear-gradient(180deg, --teal, --teal-deep)</code> with an 8px radius and a 2px <code>rgba(13,111,122,0.4)</code> shadow. The "cc" glyph is Newsreader 22 italic with <code>-0.04em</code> letter-spacing — tight enough that the two c's lock together visually.
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · why split layout</div>
+      Two reasons over a single centered card. (1) The right pane substitutes for a marketing site — first-time visitors see voice and intent before signing in. (2) The teal mass anchors the page so the form can stay genuinely small and parchment-warm without floating in white space. Below 980px the right pane hides entirely (single column, scrolls — see Section 04 mobile).
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · Google button order</div>
+      Google sits <strong>above</strong> the email/password form. Per founding-cohort feedback the majority sign in via Google. Email is the fallback. The mono "or" divider is intentionally spare — not a giant horizontal rule.
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · invite-only language</div>
+      "Founding cohort is invite-only. Need access?" — italic Newsreader, single line, centered under the submit. The link opens a contact form at <code>/access</code>; no public sign-up route exists. This keeps the cohort intentional and prevents random sign-ups from hitting Supabase.
+    </div>
+
+    <!-- States -->
+    <div style="margin-top: 36px;">
+      <div class="canvas">
+        <div class="canvas-label">Variant A · states</div>
+        <div class="state-row">
+          <!-- Error -->
+          <div class="state-frame">
+            <div class="frame-label">Error · invalid credentials</div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" value="dana@yourcoaching.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input class="form-input error" type="password" value="••••••••" />
+              <div class="form-error">
+                <i data-lucide="alert-circle"></i>
+                <span>That combination didn't match. Try again, or <a style="color:#991b1b;text-decoration:underline">reset your password</a>.</span>
+              </div>
+            </div>
+            <button class="form-submit">Sign in <i data-lucide="arrow-right"></i></button>
+          </div>
+
+          <!-- Loading -->
+          <div class="state-frame">
+            <div class="frame-label">Loading · submitting</div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" value="dana@yourcoaching.com" disabled />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input class="form-input" type="password" value="••••••••••••" disabled />
+            </div>
+            <button class="form-submit loading" disabled>Signing in</button>
+          </div>
+
+          <!-- Magic-link / OAuth confirm -->
+          <div class="state-frame">
+            <div class="frame-label">After password reset</div>
+            <div class="magic-confirm">
+              <div class="icon"><i data-lucide="mail-check"></i></div>
+              <h3>Check your inbox</h3>
+              <p>We sent a reset link to <strong style="font-style:normal"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e185808f80a1988e9493828e808289888f86cf828e8c">[email&#160;protected]</a></strong>. It expires in 30 minutes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · error state copy</div>
+      Tone matters: <em>"That combination didn't match"</em> rather than the security-theater <em>"Invalid email or password"</em>. Same information, less police-blotter. Error background <code>#fef2f2</code>, 2px left bar <code>#dc2626</code>, body italic Newsreader 13/1.45 <code>#991b1b</code>. Inline with the field, not toast.
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- 02 · VARIANT B — quiet single card               -->
+  <!-- ════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">02 · Variant B <span class="badge alt">Alt · quietest</span></div>
+      <h2 class="section-h">A single card, <em>centered</em>.</h2>
+      <p class="section-sub">No mission pane, no editorial flourish — just the form on parchment with a faint teal radial behind it. Use this if the team decides the right pane reads as "too marketing." Same form internals as A, just different framing.</p>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Variant B · centered card <span class="pill alt">Alternate</span></div>
+
+      <div class="login-stage-b">
+        <div class="login-card-b">
+          <div class="brand-row">
+            <div class="brand-mark">cc</div>
+            <div class="brand-name">Coach Claude</div>
+          </div>
+
+          <div style="text-align:center; margin-bottom: 26px;">
+            <div class="login-eyebrow" style="margin-bottom:8px">Sign in</div>
+            <h2 class="login-h" style="font-size: 28px; margin-bottom: 6px;">Welcome back.</h2>
+            <p class="login-sub" style="font-size: 14px; max-width: 280px; margin: 0 auto;">Supervision, paired with you.</p>
+          </div>
+
+          <button class="oauth-btn">
+            <svg viewBox="0 0 18 18">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.27h2.92c1.7-1.57 2.68-3.88 2.68-6.63z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.97 10.71A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.71V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.34z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.95L3.97 7.3C4.68 5.18 6.66 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="login-divider">
+            <div class="line"></div>
+            <span>or</span>
+            <div class="line"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" placeholder="you@yourcoaching.com" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password <span class="tail">Forgot?</span></label>
+            <input class="form-input" type="password" placeholder="••••••••••••" />
+          </div>
+
+          <button class="form-submit">Sign in <i data-lucide="arrow-right"></i></button>
+
+          <div class="login-footer">
+            Founding cohort is invite-only. <a>Need access?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · when to ship B over A</div>
+      If the founding cohort feedback says the right-pane quote feels like a marketing flourish that doesn't belong on a tool. B keeps the warmth and brand mark but strips everything else. Same accessibility, same form fields, smaller surface area to maintain.
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- 03 · VARIANT C — Notebook page                   -->
+  <!-- ════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">03 · Variant C <span class="badge alt">Alt · most distinctive</span></div>
+      <h2 class="section-h">A page <em>opened</em> to a new entry.</h2>
+      <p class="section-sub">Full-bleed parchment with the faint horizontal rule pattern from a notebook page, plus the red margin line. The login form sits inside the writing area as if it were today's first entry. Riskier — leans hard into the metaphor — but distinctive.</p>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Variant C · notebook page <span class="pill alt">Alternate · most distinctive</span></div>
+
+      <div class="login-stage-c">
+        <div class="login-c-content">
+          <div class="brand-row" style="margin-bottom: 32px;">
+            <div class="brand-mark">cc</div>
+            <div class="brand-name">Coach Claude</div>
+          </div>
+          <div class="login-c-date">Today · April 28</div>
+          <h2 class="login-c-h">Open the <em>notebook</em>.</h2>
+          <p class="login-c-sub">Pick up where you left off — your reflections, your patterns, your supervision. Sign in to continue the entry.</p>
+
+          <div class="login-c-form">
+            <button class="oauth-btn" style="margin-bottom: 14px;">
+              <svg viewBox="0 0 18 18">
+                <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.27h2.92c1.7-1.57 2.68-3.88 2.68-6.63z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18z"/>
+                <path fill="#FBBC05" d="M3.97 10.71A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.71V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.34z"/>
+                <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.95L3.97 7.3C4.68 5.18 6.66 3.58 9 3.58z"/>
+              </svg>
+              Continue with Google
+            </button>
+            <div class="login-divider" style="margin: 14px 0;">
+              <div class="line"></div><span>or email</span><div class="line"></div>
+            </div>
+            <div class="form-group">
+              <input class="form-input" type="email" placeholder="Email" />
+            </div>
+            <div class="form-group">
+              <input class="form-input" type="password" placeholder="Password" />
+            </div>
+            <button class="form-submit">Sign in <i data-lucide="arrow-right"></i></button>
+          </div>
+
+          <div style="margin-top: 24px; font-family:'Newsreader',serif; font-style:italic; font-size: 13px; color: var(--ink-mute);">
+            Founding cohort is invite-only. <a style="color:var(--teal-700);font-style:normal;font-weight:500;text-decoration:none">Need access?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · use sparingly</div>
+      The notebook treatment works <strong>because</strong> the rest of the app uses it. Login is the first impression — leaning this hard into the metaphor before the user has any context can read as twee. Recommend reserving C for a "story-mode" entry on the marketing site, not the auth surface.
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- 04 · MOBILE                                       -->
+  <!-- ════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">04 · Mobile (≤980px)</div>
+      <h2 class="section-h">Single column, <em>same form</em>.</h2>
+      <p class="section-sub">Right pane hides entirely (it's marketing context, not core path). Form takes full width with 24px gutters. Brand row stays at top, footer micro-meta at bottom.</p>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Mobile · 320px frame · variant A collapsed</div>
+      <div class="mobile-frame">
+        <div class="mobile-bar-mock">
+          <span>9:41</span>
+          <span style="display:flex;gap:4px;align-items:center"><i data-lucide="signal" style="width:11px;height:11px"></i><i data-lucide="wifi" style="width:11px;height:11px"></i><i data-lucide="battery-full" style="width:14px;height:11px"></i></span>
+        </div>
+        <div style="padding: 18px 8px 8px;">
+          <div class="brand-row" style="justify-content: center; margin-bottom: 22px;">
+            <div class="brand-mark" style="width:30px; height:30px; font-size: 18px;">cc</div>
+            <div class="brand-name" style="font-size: 15px;">Coach Claude</div>
+          </div>
+
+          <div style="text-align:center; margin-bottom: 22px;">
+            <div class="login-eyebrow" style="margin-bottom:6px">Sign in</div>
+            <h2 class="login-h" style="font-size: 22px; margin-bottom: 4px;">Welcome back.</h2>
+            <p class="login-sub" style="font-size: 13px; margin: 0;">Supervision, paired with you.</p>
+          </div>
+
+          <button class="oauth-btn" style="font-size: 13px; padding: 11px 14px;">
+            <svg viewBox="0 0 18 18" style="width:16px; height:16px;">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.27h2.92c1.7-1.57 2.68-3.88 2.68-6.63z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.97 10.71A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.71V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.34z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .96 4.95L3.97 7.3C4.68 5.18 6.66 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="login-divider" style="margin: 14px 0;">
+            <div class="line"></div><span>or</span><div class="line"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" placeholder="you@yourcoaching.com" style="font-size:13px;padding:10px 12px;" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password <span class="tail">Forgot?</span></label>
+            <input class="form-input" type="password" placeholder="••••••••" style="font-size:13px;padding:10px 12px;" />
+          </div>
+          <button class="form-submit" style="font-size:13px; padding: 11px 14px;">Sign in <i data-lucide="arrow-right"></i></button>
+
+          <div class="login-footer" style="font-size:12px; margin-top: 16px;">
+            Invite-only. <a>Need access?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- 05 · FAVICON                                      -->
+  <!-- ════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">05 · Favicon &amp; tab icon</div>
+      <h2 class="section-h">A serif "cc" on a teal tile.</h2>
+      <p class="section-sub">Same mark used for the login brand row. At 32×32 the full "cc" reads cleanly; at 16×16 we drop to a single "c" so the glyph stays legible. All formats generated and saved to <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--teal-700);font-style:normal;">design_handoff_founding_cohort/favicon/</code>.</p>
+    </div>
+
+    <!-- Browser tab mock -->
+    <div class="canvas" style="padding-bottom: 44px;">
+      <div class="canvas-label">In situ · browser tab</div>
+      <div style="background: linear-gradient(180deg, #d6cfc0 0%, #c5beae 100%); padding: 16px 16px 0; border-radius: 8px;">
+        <div style="display: flex; gap: 4px;">
+          <div class="browser-tab-mock" style="background:#fdfaf2; border-bottom-color:#fdfaf2;">
+            <img src="favicon/favicon-32.png" alt="" />
+            <span class="title">Coach Claude · Sign in</span>
+            <span class="x">×</span>
+          </div>
+          <div class="browser-tab-mock" style="background: #e8e2d2; opacity: 0.7;">
+            <span style="width:14px; height:14px; background: #888; border-radius: 3px;"></span>
+            <span class="title" style="color: var(--ink-mute); font-size:11.5px;">Linear · Inbox</span>
+            <span class="x">×</span>
+          </div>
+        </div>
+        <div style="background: #fdfaf2; padding: 8px 14px; border-radius: 0 8px 0 0; font-family:'Inter',sans-serif; font-size:12px; color: var(--ink-mute); display:flex; gap:8px; align-items:center;">
+          <i data-lucide="lock" style="width:12px;height:12px;"></i>
+          coachclaude2.vercel.app/login
+        </div>
+      </div>
+    </div>
+
+    <!-- File set -->
+    <div class="canvas">
+      <div class="canvas-label">Files · all generated</div>
+      <div class="favicon-grid">
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/favicon.svg" alt="" width="48" height="48" /></div>
+          <div class="filename">favicon.svg</div>
+          <div class="desc">Vector · scales to any size</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/favicon-16.png" alt="" width="16" height="16" /></div>
+          <div class="filename">favicon-16.png</div>
+          <div class="desc">Tiny · "c" only for legibility</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/favicon-32.png" alt="" width="32" height="32" /></div>
+          <div class="filename">favicon-32.png</div>
+          <div class="desc">Standard tab icon</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/favicon-48.png" alt="" width="48" height="48" /></div>
+          <div class="filename">favicon-48.png</div>
+          <div class="desc">Windows / desktop shortcut</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/apple-touch-icon.png" alt="" width="80" height="80" /></div>
+          <div class="filename">apple-touch-icon.png</div>
+          <div class="desc">180×180 · iOS home screen</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/icon-192.png" alt="" width="80" height="80" /></div>
+          <div class="filename">icon-192.png</div>
+          <div class="desc">192×192 · PWA install</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview"><img src="favicon/icon-512.png" alt="" width="80" height="80" /></div>
+          <div class="filename">icon-512.png</div>
+          <div class="desc">512×512 · PWA splash</div>
+        </div>
+        <div class="favicon-tile">
+          <div class="preview" style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute); flex-direction:column; gap:6px;">
+            <div style="display:flex;gap:6px;align-items:center;justify-content:center;"><img src="favicon/favicon-16.png" width="16"/><img src="favicon/favicon-32.png" width="24"/><img src="favicon/favicon-48.png" width="32"/></div>
+            <div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;">multi-size</div>
+          </div>
+          <div class="filename">favicon.ico</div>
+          <div class="desc">16/32/48 · legacy browsers</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drop-in code -->
+    <div class="callout" style="border-left-color: var(--gold);">
+      <div class="lab" style="color: #7a5a1a;">Drop-in · Next.js head</div>
+      <p style="margin: 4px 0 8px; font-family:'Newsreader',serif; font-style:italic; color:var(--ink-mute);">Copy this block into <code>src/app/layout.tsx</code> (or whatever wraps your root <code>&lt;head&gt;</code>). Move the seven files into <code>public/</code> at project root.</p>
+      <pre style="margin: 0; font-family:'JetBrains Mono',monospace; font-size: 11.5px; line-height: 1.55; background: var(--paper-deep); padding: 14px 16px; border-radius: 4px; color: var(--ink); overflow-x: auto;">&lt;link rel="icon" type="image/svg+xml" href="/favicon.svg" /&gt;
+&lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" /&gt;
+&lt;link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" /&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" /&gt;
+&lt;link rel="manifest" href="/site.webmanifest" /&gt;
+&lt;meta name="theme-color" content="#0d6f7a" /&gt;</pre>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · why "cc" not a logo</div>
+      A typographic monogram survives at 16×16 where a custom logo glyph won't. The italic "cc" is also already in use on the rail brand mark in the app shell — this just re-uses it. Decision: <strong>do not commission a custom logo for V1.</strong> Once the app finds product-market fit, revisit.
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · 16px legibility</div>
+      At 16×16, the double "cc" becomes mush. The 16px PNG drops to a single italic "c" at 85% of the tile height — the same letterform, just isolated. The SVG keeps the full "cc" because vector handles sub-pixel rendering better. ICO bundles 16/32/48 so legacy IE / Chromium pickers grab the right size.
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <div style="margin-top: 80px; padding-top: 32px; border-top: 2px solid var(--ink); font-family:'Newsreader',serif; font-size: 14px; line-height: 1.6; color: var(--ink-mute); font-style: italic;">
+    <p>Login implementation lives in <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--teal-700);">src/app/auth/</code>. Use existing Supabase Auth client (<code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--teal-700);">@supabase/ssr</code>) — wrap browser-only access in <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--teal-700);">useMemo</code> with <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--teal-700);">typeof window === 'undefined'</code> guard per CLAUDE.md §11. Drop favicon files into <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--teal-700);">public/</code>.</p>
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>

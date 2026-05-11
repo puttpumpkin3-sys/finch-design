@@ -1,0 +1,2570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Phase 2 — New Surfaces &amp; UX Decisions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --paper:        hsl(42 30% 96%);
+    --paper-soft:   hsl(42 30% 98%);
+    --paper-deep:   hsl(40 30% 92%);
+    --ink:          #2e2620;
+    --ink-soft:     #3f3428;
+    --ink-mute:     #5a4e3e;
+    --ink-quiet:    #8a7a64;
+    --line:         #d4c3a0;
+    --line-soft:    #e0d4b8;
+    --gold:         #ca8a04;
+    --gold-soft:    hsl(48 80% 95%);
+    --gold-deep:    #7a5a1a;
+    --paper-bg:     hsl(42 30% 96%);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 56px 120px;
+  }
+
+  /* ─── Document header ─── */
+  .doc-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 14px;
+  }
+  .doc-h {
+    font-family: 'Newsreader', serif;
+    font-size: 52px;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  .doc-h em { font-style: italic; color: var(--coaching-700); }
+  .doc-lede {
+    font-family: 'Newsreader', serif;
+    font-size: 19px;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--ink-mute);
+    max-width: 720px;
+    margin: 0 0 36px;
+  }
+  .doc-lede strong { font-weight: 600; font-style: normal; color: var(--ink); }
+
+  /* ─── TOC ─── */
+  .toc {
+    background: var(--paper-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 22px 28px;
+    margin-bottom: 64px;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .toc-h {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 14px;
+  }
+  .toc ol { margin: 0; padding: 0 0 0 18px; columns: 2; column-gap: 32px; }
+  .toc li {
+    font-family: 'Newsreader', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    break-inside: avoid;
+  }
+  .toc li a { color: var(--ink-soft); text-decoration: none; }
+  .toc li a:hover { color: var(--coaching-700); }
+  .toc li .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-quiet);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-left: 6px;
+  }
+
+  /* ─── Section frames ─── */
+  .section { margin-bottom: 96px; scroll-margin-top: 24px; }
+  .section-head { margin-bottom: 32px; padding-bottom: 18px; border-bottom: 2px solid var(--ink); }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--coaching-700);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-num .priority {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--coaching-100);
+    color: var(--coaching-700);
+    letter-spacing: 0.1em;
+  }
+  .section-num .priority.p1 { background: #fee2e2; color: #991b1b; }
+  .section-num .priority.p2 { background: #fef3c7; color: #92400e; }
+  .section-num .priority.p3 { background: var(--coaching-100); color: var(--coaching-700); }
+  .section-num .priority.p4 { background: var(--muted); color: var(--ink-quiet); }
+  .section-h {
+    font-family: 'Newsreader', serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .section-h em { font-style: italic; color: var(--coaching-700); }
+  .section-sub {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--ink-mute);
+    max-width: 760px;
+    margin: 0;
+  }
+  .section-sub strong { font-style: normal; font-weight: 600; color: var(--ink); }
+
+  /* ─── Subsection ─── */
+  .sub {
+    margin-top: 40px;
+    margin-bottom: 24px;
+  }
+  .sub-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 6px;
+  }
+  .sub-h {
+    font-family: 'Newsreader', serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .sub-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    font-family: 'Inter', sans-serif;
+    max-width: 760px;
+  }
+  .sub-desc code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: var(--paper-deep);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--coaching-700);
+  }
+
+  /* ─── Mockup canvas ─── */
+  .canvas {
+    background: var(--paper-soft);
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    padding: 32px;
+    margin: 18px 0 8px;
+    position: relative;
+  }
+  .canvas-label {
+    position: absolute;
+    top: -10px;
+    left: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    background: var(--paper);
+    padding: 0 10px;
+  }
+  .canvas-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .canvas-row.three { grid-template-columns: repeat(3, 1fr); }
+  .canvas .frame-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .canvas .frame-label .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--coaching-100);
+    color: var(--coaching-700);
+    letter-spacing: 0.06em;
+  }
+  .canvas .frame-label .badge.recommended { background: var(--coaching-500); color: #fff; }
+  .canvas .frame-label .badge.alt { background: var(--paper-deep); color: var(--ink-mute); }
+
+  /* ─── Annotation callouts ─── */
+  .callout {
+    margin: 16px 0;
+    padding: 14px 18px;
+    background: var(--paper-soft);
+    border-left: 2px solid var(--coaching-500);
+    border-radius: 0 6px 6px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .callout .lab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coaching-700);
+    margin-bottom: 4px;
+  }
+  .callout.gold { border-left-color: var(--gold); background: var(--gold-soft); }
+  .callout.gold .lab { color: var(--gold-deep); }
+  .callout.warn { border-left-color: #dc2626; background: #fef2f2; }
+  .callout.warn .lab { color: #991b1b; }
+
+  .decision {
+    margin: 16px 0 8px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--coaching-50), var(--card));
+    border: 1px solid var(--coaching-200);
+    border-radius: 8px;
+  }
+  .decision-lab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--coaching-700);
+    margin-bottom: 8px;
+  }
+  .decision-h {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .decision-h em { font-style: italic; color: var(--coaching-700); }
+  .decision-rationale {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+  }
+
+  /* ─── Annotation pin ─── */
+  .pin-row {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--line);
+    font-family: 'Inter', sans-serif;
+  }
+  .pin-row:last-child { border-bottom: none; }
+  .pin-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--coaching-500);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .pin-body {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .pin-body strong { color: var(--ink); font-weight: 600; }
+  .pin-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: var(--paper-deep);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--coaching-700);
+  }
+
+  /* ─── Spec table ─── */
+  .spec-table {
+    margin: 16px 0;
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  .spec-table table { width: 100%; border-collapse: collapse; }
+  .spec-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--paper-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .spec-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: var(--paper-deep);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--coaching-700);
+  }
+  .swatch-cell { display: flex; align-items: center; gap: 8px; }
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,.08);
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────────────────
+     SHARED MOCK COMPONENTS
+     (re-implementations of notebook-b primitives,
+      tightened so they fit inside the canvases)
+     ───────────────────────────────────────── */
+
+  /* nb-page-card (Home session card) */
+  .nb-page-card {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 18px 18px 14px;
+    box-shadow: 0 1px 0 var(--line), 0 4px 14px -6px rgba(90,70,40,.15);
+    position: relative;
+  }
+  .nb-page-card.next {
+    background: linear-gradient(180deg, #fefaf0, #fff);
+    border-color: var(--coaching-300);
+  }
+  .nb-page-card.next::before {
+    content: 'NEXT';
+    position: absolute;
+    top: -9px;
+    right: 14px;
+    background: var(--coaching-600);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .nb-page-card.cancelled {
+    background: var(--paper-soft);
+    border-color: var(--line-soft);
+    border-style: dashed;
+    box-shadow: none;
+  }
+  .nb-page-card.cancelled .nb-page-time strong,
+  .nb-page-card.cancelled .nb-page-name {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ink-quiet);
+    color: var(--ink-quiet);
+  }
+  .nb-page-card.cancelled .nb-page-hint { color: var(--ink-quiet); font-style: italic; }
+  .nb-page-card.cancelled::after {
+    content: 'CANCELLED';
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #fef2f2;
+    color: #991b1b;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .nb-page-card.rescheduled::after {
+    content: 'RESCHEDULED';
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #fef3c7;
+    color: #92400e;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .nb-page-card.rescheduled .nb-old-time {
+    text-decoration: line-through;
+    color: var(--ink-quiet);
+    font-weight: 400;
+    margin-right: 6px;
+  }
+  .nb-page-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--coaching-700);
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .nb-page-time strong {
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 5px;
+  }
+  .nb-page-name {
+    font-family: 'Newsreader', serif;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .nb-page-phase {
+    font-size: 11px;
+    color: var(--ink-quiet);
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .nb-page-hint {
+    font-family: 'Newsreader', serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-style: italic;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .nb-page-hint em { color: var(--coaching-700); font-style: italic; font-weight: 500; }
+  .nb-page-prep {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--coaching-700);
+    font-family: 'Inter', sans-serif;
+  }
+  .nb-page-prep svg { width: 12px; height: 12px; }
+
+  /* Greeting block */
+  .nb-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin-bottom: 10px;
+  }
+  .nb-greeting-h {
+    font-family: 'Newsreader', serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .nb-greeting-h em { font-style: italic; color: var(--coaching-700); }
+  .nb-greeting-sub {
+    font-family: 'Newsreader', serif;
+    font-size: 15.5px;
+    font-style: italic;
+    color: var(--ink-mute);
+    line-height: 1.55;
+    max-width: 580px;
+    margin: 0 0 28px;
+  }
+  .nb-greeting-sub strong { font-style: normal; font-weight: 600; color: var(--ink); }
+
+  .nb-section-eye {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nb-section-eye .tail {
+    margin-left: auto;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    color: var(--coaching-700);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .nb-section-eye svg { width: 12px; height: 12px; }
+
+  .nb-today-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .nb-today-grid.two { grid-template-columns: repeat(2, 1fr); max-width: 720px; }
+  .nb-today-grid.one { grid-template-columns: 1fr; max-width: 560px; }
+
+  /* Skipped event row */
+  .skipped-list {
+    background: var(--paper-soft);
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    padding: 14px 18px;
+  }
+  .skipped-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px dotted var(--line);
+    align-items: center;
+    font-size: 13px;
+  }
+  .skipped-row:last-child { border-bottom: none; }
+  .skipped-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-quiet);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .skipped-body {
+    font-family: 'Newsreader', serif;
+    font-size: 14px;
+    color: var(--ink-mute);
+    line-height: 1.45;
+  }
+  .skipped-body strong { font-weight: 600; color: var(--ink-soft); font-style: normal; }
+  .skipped-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--ink-quiet);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: #fff;
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--line-soft);
+  }
+  .skipped-action {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    color: var(--coaching-700);
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .skipped-action:hover { text-decoration: underline; }
+
+  /* Empty day state — calm card */
+  .empty-day-card {
+    background: linear-gradient(180deg, var(--paper-soft), #fff);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 36px 32px;
+    box-shadow: 0 1px 0 var(--line);
+    text-align: left;
+    max-width: 640px;
+  }
+  .empty-day-eye {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--coaching-700);
+    margin-bottom: 12px;
+  }
+  .empty-day-h {
+    font-family: 'Newsreader', serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 0 0 8px;
+    letter-spacing: -0.015em;
+  }
+  .empty-day-h em { font-style: italic; color: var(--coaching-700); }
+  .empty-day-sub {
+    font-family: 'Newsreader', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-mute);
+    line-height: 1.55;
+    margin: 0 0 18px;
+  }
+  .empty-day-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--coaching-700);
+    cursor: pointer;
+    padding: 7px 12px;
+    border: 1px solid var(--coaching-200);
+    border-radius: 6px;
+    background: #fff;
+  }
+  .empty-day-cta svg { width: 13px; height: 13px; }
+
+  /* Reflection prompt strip (reused from notebook) */
+  .nb-reflect {
+    background: var(--gold-soft);
+    border-radius: 4px;
+    padding: 20px 24px;
+    border: 1px solid #e0d4a0;
+  }
+  .nb-reflect-lab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 9px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nb-reflect-lab svg { width: 12px; height: 12px; }
+  .nb-reflect-q {
+    font-family: 'Newsreader', serif;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.45;
+    color: #3a2e1a;
+    margin-bottom: 12px;
+    letter-spacing: -0.005em;
+  }
+  .nb-reflect-tail {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--gold-deep);
+    font-family: 'Inter', sans-serif;
+  }
+  .nb-reflect-tail button {
+    font-family: inherit;
+    font-size: 11.5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #d9c98a;
+    background: #fffbea;
+    color: #3a2e1a;
+    cursor: pointer;
+  }
+  .nb-reflect-tail button.prim { background: var(--gold-deep); color: #fffbea; border-color: var(--gold-deep); }
+
+  /* ─────── THREAD MOCK COMPONENTS ─────── */
+  .thread-canvas {
+    background: var(--bg);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 18px 24px 14px;
+    overflow: hidden;
+  }
+  .day-div { display: flex; align-items: center; gap: 10px; padding: 8px 0 14px; }
+  .day-div .line { flex: 1; height: 1px; background: var(--border); }
+  .day-div span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted-fg);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  /* Entry card — formalized */
+  .entry {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-card);
+    max-width: 720px;
+    position: relative;
+  }
+  .entry-h {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .entry-chip {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .entry-chip svg { width: 14px; height: 14px; }
+  .entry-chip.session { background: var(--coaching-100); color: var(--coaching-600); }
+  .entry-chip.analysis { background: hsl(270 60% 96%); color: #7c3aed; }
+  .entry-chip.note { background: hsl(45 100% 94%); color: #d97706; }
+  .entry-chip.claude { background: var(--coaching-500); color: #fff; }
+  .entry-chip.briefing { background: linear-gradient(135deg, var(--coaching-100), var(--coaching-50)); color: var(--coaching-700); }
+  .entry-chip.cmd { background: var(--coaching-50); color: var(--coaching-700); border: 1px dashed var(--coaching-300); }
+  .entry-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .entry-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.3;
+  }
+  .entry-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--muted-fg);
+    margin-top: 2px;
+  }
+  .entry-author {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .entry-author.ai { background: var(--coaching-100); color: var(--coaching-700); }
+  .entry-author.you { background: hsl(45 100% 94%); color: #92400e; }
+  .entry-body {
+    font-family: 'Newsreader', serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--fg);
+  }
+  .entry-body.clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--muted-fg);
+  }
+  .entry-body em { font-style: italic; color: var(--coaching-700); }
+  .entry-foot {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    color: var(--muted-fg);
+  }
+  .entry-foot a { color: var(--coaching-700); cursor: pointer; font-weight: 500; }
+  .entry-foot a:hover { text-decoration: underline; }
+  .entry-foot .replies {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .entry-foot .replies svg { width: 11px; height: 11px; }
+  /* highlighted/focused state */
+  .entry.focused {
+    border-color: var(--coaching-500);
+    box-shadow: 0 0 0 3px hsla(184,82%,26%,.12), var(--shadow-card-hover);
+  }
+  /* Coach note — different look (handwritten-feel sidebar entry) */
+  .note-entry {
+    display: flex;
+    gap: 10px;
+    padding: 8px 14px 8px 16px;
+    border-left: 2px solid #fbbf24;
+    background: linear-gradient(90deg, hsl(48 80% 97%) 0%, transparent 100%);
+    border-radius: 0 8px 8px 0;
+    margin: 8px 0 12px;
+    max-width: 580px;
+    align-items: flex-start;
+  }
+  .note-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted-fg);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .note-body {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--fg);
+  }
+  .note-body .note-lab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #92400e;
+    margin-right: 8px;
+    font-style: normal;
+  }
+  /* Command confirmation receipt */
+  .cmd-conf {
+    display: flex;
+    gap: 10px;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--coaching-50), transparent);
+    border-left: 2px solid var(--coaching-500);
+    border-radius: 0 8px 8px 0;
+    margin: 8px 0 12px;
+    align-items: center;
+    max-width: 580px;
+    font-family: 'Inter', sans-serif;
+  }
+  .cmd-conf .ico {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--coaching-500);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cmd-conf .ico svg { width: 11px; height: 11px; }
+  .cmd-conf .t {
+    flex: 1;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+  .cmd-conf .t strong { color: var(--coaching-700); }
+  .cmd-conf .t em { color: var(--coaching-600); font-style: normal; font-weight: 500; }
+  .cmd-conf .undo {
+    font-family: inherit;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted-fg);
+    cursor: pointer;
+  }
+
+  /* Briefing — collapsed */
+  .brief-collapsed {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--coaching-50) 80%, white), var(--card));
+    border: 1px solid var(--coaching-300);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 720px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px -6px hsla(184,82%,26%,.15);
+  }
+  .brief-collapsed .ico {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: var(--coaching-500);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .brief-collapsed .ico svg { width: 13px; height: 13px; }
+  .brief-collapsed .t {
+    flex: 1;
+    font-family: 'Newsreader', serif;
+    font-size: 13.5px;
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+  .brief-collapsed .lab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--coaching-700);
+    margin-right: 8px;
+    font-style: normal;
+  }
+  .brief-collapsed .chev { color: var(--muted-fg); }
+  .brief-collapsed .chev svg { width: 14px; height: 14px; }
+
+  /* Compose */
+  .compose-mock {
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    margin-top: 14px;
+    max-width: 720px;
+  }
+  .compose-box {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .compose-ta {
+    width: 100%;
+    padding: 12px 14px 8px;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Newsreader', serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--muted-fg);
+    background: transparent;
+    box-sizing: border-box;
+    font-style: italic;
+  }
+  .compose-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px 8px;
+    border-top: 1px solid var(--border);
+  }
+  .compose-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    color: var(--muted-fg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .compose-tool:hover { background: var(--muted); color: var(--fg); }
+  .compose-tool svg { width: 13px; height: 13px; }
+  .compose-send {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: var(--coaching-500);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ─── Tabs (Practice) ─── */
+  .practice-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .practice-tab {
+    padding: 10px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink-quiet);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .practice-tab.on { color: var(--coaching-700); border-bottom-color: var(--coaching-500); font-weight: 600; }
+
+  /* ─── Library cards ─── */
+  .lib-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .lib-card {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 0 var(--line);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .lib-card:hover { transform: translateY(-1px); box-shadow: 0 1px 0 var(--line), 0 6px 18px -8px rgba(90,70,40,.18); }
+  .lib-card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .lib-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+  }
+  .lib-type.book { color: #7c2d12; }
+  .lib-type.framework { color: var(--coaching-700); }
+  .lib-type.article { color: #6b21a8; }
+  .lib-type.other { color: var(--ink-quiet); }
+  .lib-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--ink-quiet);
+  }
+  .lib-icon.book { color: #7c2d12; }
+  .lib-icon.framework { color: var(--coaching-700); }
+  .lib-icon.article { color: #6b21a8; }
+  .lib-icon svg { width: 18px; height: 18px; }
+  .lib-card-t {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .lib-card-author {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+  }
+  .lib-card-desc {
+    font-family: 'Newsreader', serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .lib-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--ink-quiet);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .lib-upload {
+    background: linear-gradient(180deg, var(--paper-soft), #fff);
+    border: 2px dashed var(--line);
+    border-radius: 4px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .lib-upload-h {
+    font-family: 'Newsreader', serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 6px;
+    letter-spacing: -0.015em;
+  }
+  .lib-upload-sub {
+    font-family: 'Newsreader', serif;
+    font-size: 13.5px;
+    font-style: italic;
+    color: var(--ink-mute);
+    margin-bottom: 16px;
+  }
+  .lib-upload-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-family: 'Inter', sans-serif;
+  }
+  .lib-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--line-soft);
+    background: #fff;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lib-upload-btn.prim { background: var(--coaching-500); color: #fff; border-color: var(--coaching-500); }
+  .lib-upload-btn svg { width: 13px; height: 13px; }
+
+  .lib-trust {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(90deg, var(--coaching-50), transparent);
+    border-left: 2px solid var(--coaching-500);
+    border-radius: 0 6px 6px 0;
+    margin-top: 18px;
+    font-family: 'Newsreader', serif;
+    font-size: 13.5px;
+    font-style: italic;
+    color: var(--ink-mute);
+  }
+  .lib-trust .ico { width: 22px; height: 22px; color: var(--coaching-700); flex-shrink: 0; }
+  .lib-trust .ico svg { width: 22px; height: 22px; }
+  .lib-trust strong { font-style: normal; font-weight: 600; color: var(--coaching-700); }
+
+  .lib-empty {
+    background: linear-gradient(180deg, var(--paper-soft), #fff);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 48px 32px;
+    text-align: center;
+  }
+  .lib-empty-h {
+    font-family: 'Newsreader', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+  }
+  .lib-empty-h em { font-style: italic; color: var(--coaching-700); }
+  .lib-empty-sub {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink-mute);
+    margin: 0 auto 24px;
+    max-width: 460px;
+    line-height: 1.55;
+  }
+
+  /* ─── Dictation mock ─── */
+  .dict-frame {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 28px;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .dict-prompt {
+    font-family: 'Newsreader', serif;
+    font-size: 22px;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    margin: 0 0 24px;
+  }
+  .dict-prompt em { color: var(--coaching-700); }
+  .dict-mode-toggle {
+    display: inline-flex;
+    background: var(--paper-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    padding: 3px;
+    margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+  }
+  .dict-mode-toggle button {
+    border: none;
+    background: none;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--ink-quiet);
+    font-family: inherit;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dict-mode-toggle button.on { background: var(--card); color: var(--coaching-700); box-shadow: var(--shadow-card); }
+  .dict-mode-toggle button svg { width: 12px; height: 12px; }
+
+  .dict-stage {
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    padding: 36px 32px;
+    text-align: center;
+    background: var(--paper-soft);
+    margin-bottom: 18px;
+  }
+  .dict-mic {
+    width: 88px;
+    height: 88px;
+    border-radius: 999px;
+    background: var(--coaching-500);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 8px 28px -8px hsla(184,82%,26%,.4);
+    cursor: pointer;
+  }
+  .dict-mic svg { width: 36px; height: 36px; }
+  .dict-mic.recording {
+    background: #dc2626;
+    box-shadow: 0 0 0 8px rgba(220,38,38,.12), 0 0 0 16px rgba(220,38,38,.06);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 8px rgba(220,38,38,.12), 0 0 0 16px rgba(220,38,38,.06); }
+    50% { box-shadow: 0 0 0 12px rgba(220,38,38,.18), 0 0 0 24px rgba(220,38,38,.08); }
+  }
+  .dict-cta {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--ink-mute);
+    margin: 0 0 8px;
+    line-height: 1.45;
+  }
+  .dict-hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ink-quiet);
+    letter-spacing: 0.02em;
+  }
+  .dict-waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 50px;
+    margin: 14px 0 8px;
+  }
+  .dict-waveform span {
+    width: 3px;
+    background: var(--coaching-500);
+    border-radius: 999px;
+    animation: wave 1.1s ease-in-out infinite;
+  }
+  .dict-waveform span:nth-child(1) { animation-delay: -1.0s; }
+  .dict-waveform span:nth-child(2) { animation-delay: -0.85s; }
+  .dict-waveform span:nth-child(3) { animation-delay: -0.7s; }
+  .dict-waveform span:nth-child(4) { animation-delay: -0.55s; }
+  .dict-waveform span:nth-child(5) { animation-delay: -0.4s; }
+  .dict-waveform span:nth-child(6) { animation-delay: -0.25s; }
+  .dict-waveform span:nth-child(7) { animation-delay: -0.1s; }
+  .dict-waveform span:nth-child(8) { animation-delay: 0s; }
+  .dict-waveform span:nth-child(9) { animation-delay: -0.7s; }
+  .dict-waveform span:nth-child(10) { animation-delay: -0.5s; }
+  .dict-waveform span:nth-child(11) { animation-delay: -0.3s; }
+  .dict-waveform span:nth-child(12) { animation-delay: -0.15s; }
+  @keyframes wave {
+    0%, 100% { height: 8px; opacity: 0.5; }
+    50% { height: 36px; opacity: 1; }
+  }
+  .dict-timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--coaching-700);
+    letter-spacing: 0.04em;
+    margin: 12px 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dict-transcript {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin-top: 18px;
+    box-shadow: 0 1px 0 var(--line);
+    position: relative;
+  }
+  .dict-transcript-attribution {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coaching-700);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dict-transcript-attribution svg { width: 11px; height: 11px; }
+  .dict-transcript-body {
+    font-family: 'Newsreader', serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .dict-transcript-body em { font-style: italic; color: var(--coaching-700); background: var(--coaching-50); padding: 0 2px; border-radius: 2px; }
+  .dict-transcript-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    font-family: 'Inter', sans-serif;
+  }
+  .dict-transcript-actions button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--line-soft);
+    background: #fff;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dict-transcript-actions button.prim { background: var(--coaching-500); color: #fff; border-color: var(--coaching-500); }
+  .dict-transcript-actions button svg { width: 12px; height: 12px; }
+
+  /* ─── Mobile frame ─── */
+  .mobile-frame {
+    width: 320px;
+    background: var(--paper);
+    border: 8px solid #2e2620;
+    border-radius: 32px;
+    padding: 16px 12px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .mobile-frame .mobile-bar-mock {
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* Section divider rule */
+  .doc-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line), transparent);
+    margin: 80px 0;
+  }
+
+  /* Footer */
+  .doc-foot {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 2px solid var(--ink);
+    font-family: 'Newsreader', serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+
+  /* Type-spec block */
+  .type-spec {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 24px;
+    padding: 14px 0;
+    border-bottom: 1px dotted var(--line);
+    align-items: baseline;
+  }
+  .type-spec:last-child { border-bottom: none; }
+  .type-spec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+  }
+  .type-spec-sample { font-family: 'Inter', sans-serif; }
+
+  @media print {
+    body { background: #fff; }
+    .canvas { background: #fff; border-color: #aaa; }
+    .doc { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ════════════════════════════════════════════════
+       HEADER
+       ════════════════════════════════════════════════ -->
+  <div class="doc-eyebrow">Phase 2 · Founding Cohort · Apr 2026</div>
+  <h1 class="doc-h">Six new surfaces, <em>annotated</em>.</h1>
+  <p class="doc-lede">Every visual below extends the <strong>notebook-b</strong> vocabulary already shipped — warm parchment, Newsreader serif, JetBrains Mono labels, teal accent, page-card shadows, dashed warm dividers. Nothing new in the type or color system. New patterns are flagged in the callouts. <strong>Implementation lives in the existing Next.js / Tailwind stack;</strong> the HTML below is reference fidelity, not a ship target.</p>
+
+  <div class="toc">
+    <div class="toc-h">In this document</div>
+    <ol>
+      <li><a href="#r4">Thread entry cards</a> <span class="meta">P1 · Highest traffic</span></li>
+      <li><a href="#r1">Cancelled / rescheduled sessions</a> <span class="meta">P2 · Daily</span></li>
+      <li><a href="#r3">Non-coaching events</a> <span class="meta">P2 · Reduces noise</span></li>
+      <li><a href="#r5">Sparse home layouts</a> <span class="meta">P3 · Polish</span></li>
+      <li><a href="#r2">Your Library</a> <span class="meta">P3 · New surface</span></li>
+      <li><a href="#r6">Dictation mode</a> <span class="meta">P4 · Nice-to-have</span></li>
+    </ol>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       1 · THREAD ENTRY CARDS  (Request 4 · P1)
+       ════════════════════════════════════════════════ -->
+  <section class="section" id="r4">
+    <div class="section-head">
+      <div class="section-num">01 · Thread entry cards <span class="priority p1">P1 · Ship first</span></div>
+      <h2 class="section-h">A typed feed, <em>not chat bubbles</em>.</h2>
+      <p class="section-sub">The current implementation defaults to chat-bubble styling for everything. The thread is not a chat — it's a typed log of artefacts (transcript, analysis, your notes, supervisor replies, briefings, command receipts) that happen to be threaded by day. <strong>Each entry type has its own visual shape</strong>, and the bubble style is reserved only for back-and-forth supervisor exchanges.</p>
+    </div>
+
+    <!-- 1.1 Type mapping -->
+    <div class="sub">
+      <div class="sub-eyebrow">1.1 · Type mapping</div>
+      <h3 class="sub-h">Five entry kinds, plus two log forms</h3>
+      <p class="sub-desc">Every entry in the feed is one of these. The chip color, icon, body typography, and footer differ. Author pill (<code>AI</code> / <code>YOU</code>) is required on Analysis and Note; optional on others.</p>
+    </div>
+
+    <div class="spec-table">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:160px">Entry kind</th>
+            <th style="width:120px">Chip color</th>
+            <th style="width:120px">Icon (lucide)</th>
+            <th>Body typography</th>
+            <th>Author pill</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Session transcript</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:#ccebee"></div><code>coaching-100</code></div></td>
+            <td><code>play</code></td>
+            <td>Inter 13.5/1.3 title · Inter 11/muted sub</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>AI / supervision analysis</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:hsl(270 60% 96%)"></div><code>purple-100</code></div></td>
+            <td><code>brain</code></td>
+            <td>Newsreader 14.5/1.6 body, 2-line clamp default</td>
+            <td><code>AI</code> · teal</td>
+          </tr>
+          <tr>
+            <td><strong>Coach note / reflection</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:hsl(45 100% 94%)"></div><code>amber-50</code></div></td>
+            <td><code>sticky-note</code></td>
+            <td>Newsreader italic 13.5/1.55 — sidebar entry, not card</td>
+            <td><code>YOU</code> · amber</td>
+          </tr>
+          <tr>
+            <td><strong>Claude supervisor reply</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:#0d6f7a"></div><code>coaching-500</code> (filled)</div></td>
+            <td><code>sparkles</code></td>
+            <td>Inter 13.5/1.6 — chat bubble form, only for back-and-forth</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>Pre-session briefing</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:linear-gradient(135deg,#ccebee,#e6f5f6)"></div>teal gradient</div></td>
+            <td><code>compass</code></td>
+            <td>Newsreader 17/1.3 title · serif italic body · pinned at top of feed</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>Command receipt</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:#e6f5f6;border:1px dashed #5cbcc5"></div>dashed teal</div></td>
+            <td><code>check</code></td>
+            <td>Inter 12/1.45 — inline, no card chrome, undo button</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>Quick log note</strong></td>
+            <td><div class="swatch-cell"><div class="swatch" style="background:#fef3c7"></div><code>amber-100</code> 2px L-bar</div></td>
+            <td>—</td>
+            <td>Newsreader italic 13.5/1.55 — timestamped log row, no chip</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 1.2 Mockup of the feed -->
+    <div class="sub">
+      <div class="sub-eyebrow">1.2 · The feed in situ</div>
+      <h3 class="sub-h">A representative day, all seven kinds visible</h3>
+      <p class="sub-desc">Numbered pins below the mockup map to exact specs.</p>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Thread feed · client view · Alex Chen</div>
+
+      <div class="thread-canvas">
+
+        <!-- Briefing pinned -->
+        <div class="brief-collapsed">
+          <div class="ico"><i data-lucide="compass"></i></div>
+          <div class="t"><span class="lab">Briefing · Thu 9am</span>Start somatic. He'll arrive with <em>a new deck and a decision already made</em> about Jordan — both are bids to skip the hard material.</div>
+          <div class="chev"><i data-lucide="chevron-down"></i></div>
+        </div>
+
+        <!-- Day -->
+        <div class="day-div"><div class="line"></div><span>Thu · April 11 · post-session</span><div class="line"></div></div>
+
+        <!-- Session transcript -->
+        <div class="entry">
+          <div class="entry-h">
+            <div class="entry-chip session"><i data-lucide="play"></i></div>
+            <div class="entry-meta">
+              <div class="entry-title">Session 8 · "Can't tell if I'm coaching or firing her"</div>
+              <div class="entry-sub">58 min · transcribed · Granola</div>
+            </div>
+          </div>
+          <div class="entry-body clamp">High intellectualization throughout. 40% of session on Jordan; coach made three attempts to slow down, two landed. Reschedule pattern resurfaced — he moved Wednesday's hour after a board prep ran long.</div>
+          <div class="entry-foot">
+            <a>Read transcript →</a>
+            <span class="replies"><i data-lucide="message-circle"></i>2 notes</span>
+          </div>
+        </div>
+
+        <!-- AI analysis -->
+        <div class="entry">
+          <div class="entry-h">
+            <div class="entry-chip analysis"><i data-lucide="brain"></i></div>
+            <div class="entry-meta">
+              <div class="entry-title">Supervision analysis · IFS lens</div>
+              <div class="entry-sub">3 min after session · Claude Sonnet</div>
+            </div>
+            <span class="entry-author ai">AI</span>
+          </div>
+          <div class="entry-body clamp">A <em>Manager part</em> ran most of the hour — closing loops, action-planning, citing the org chart. The Exile material — grief about Jordan, the father echo — only appeared in the last twelve minutes and you let it pass without naming. Worth interrogating: is this a stylistic preference (you let clients lead), or a countertransference move…</div>
+          <div class="entry-foot">
+            <a>Expand →</a>
+            <span class="replies"><i data-lucide="message-circle"></i>1 reply</span>
+          </div>
+        </div>
+
+        <!-- Quick log note (sidebar entry, not card) -->
+        <div class="note-entry">
+          <span class="note-time">9:14 AM</span>
+          <div class="note-body"><span class="note-lab">Note</span>Don't lead with the deck Thursday. Open somatic. Name the reschedule pattern if it feels right.</div>
+        </div>
+
+        <!-- Day -->
+        <div class="day-div"><div class="line"></div><span>Today · April 17</span><div class="line"></div></div>
+
+        <!-- Command receipt -->
+        <div class="cmd-conf">
+          <span class="ico"><i data-lucide="check"></i></span>
+          <span class="t">Added <strong>pattern</strong> · <em>Reschedule before hard conversation</em> · 3× so far · visible in rail.</span>
+          <button class="undo">Undo</button>
+        </div>
+
+        <!-- Coach note (longer reflection) -->
+        <div class="entry">
+          <div class="entry-h">
+            <div class="entry-chip note"><i data-lucide="sticky-note"></i></div>
+            <div class="entry-meta">
+              <div class="entry-title">Coach reflection · before Thursday</div>
+              <div class="entry-sub">Apr 17 · 9:24 AM</div>
+            </div>
+            <span class="entry-author you">YOU</span>
+          </div>
+          <div class="entry-body" style="font-style:italic">The way to go deep with Alex is through his managers, not around them. I keep wanting to cut to the wound — that's mine. He needs the strategy frame as a holding container. Stay there longer.</div>
+        </div>
+
+        <!-- Claude supervisor reply (chat bubble form — preserved from D3) -->
+        <div class="entry" style="background: linear-gradient(135deg, var(--coaching-500), var(--coaching-600)); border-color: transparent; color: #fff; max-width: 580px;">
+          <div class="entry-h" style="margin-bottom:6px">
+            <div class="entry-chip" style="background: rgba(255,255,255,.18); color: #fff"><i data-lucide="sparkles"></i></div>
+            <div class="entry-meta">
+              <div class="entry-title" style="color:#fff">Supervisor</div>
+              <div class="entry-sub" style="color: rgba(255,255,255,.7)">9:23 AM · in reply to you</div>
+            </div>
+          </div>
+          <div class="entry-body" style="color:#fff; font-family: 'Inter', sans-serif; font-size: 13.5px; line-height: 1.6;">Three things, quickly. The hour matters — he's not showing you reasoning, he's showing you state. Pressured, alone, rewriting at midnight. <em style="color:#fff;opacity:.92;font-weight:500;">"Sorry for the hour"</em> is the tell. Meeting him in that state is the whole session — don't chase the deck.</div>
+        </div>
+
+      </div>
+
+      <div class="compose-mock">
+        <div class="compose-box">
+          <textarea class="compose-ta" rows="2">Type a thought, ask your supervisor, or give a command ("add Jordan as a theme", "pin my hypothesis"…)</textarea>
+          <div class="compose-toolbar">
+            <button class="compose-tool"><i data-lucide="mic"></i>Transcript</button>
+            <button class="compose-tool"><i data-lucide="paperclip"></i>Document</button>
+            <button class="compose-tool"><i data-lucide="at-sign"></i>Reference</button>
+            <button class="compose-send"><i data-lucide="send-horizontal"></i>Send</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · pinned briefing</div>
+      Always pinned at the top of the feed (sticks past day-dividers). Collapsed by default · 12px 16px padding · gradient teal-50 → white background · 1px <code>coaching-300</code> border · 12px radius · <code>shadow-card-hover</code> on hover. Click anywhere → expand to <strong>Thread-briefing-expanded.html</strong> view (already specced).
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · entry card defaults</div>
+      Card: 12px 16px padding · 1px <code>border</code> · 12px radius · <code>shadow-card</code> · max-width 720px (centered in feed). Chip: 32×32 · <code>rounded-full</code>. Title: Inter 13.5/600/<code>fg</code>. Sub: Inter 11/<code>muted-fg</code>, 2px gap. Body clamp: 2 lines via <code>-webkit-line-clamp</code>, color <code>muted-fg</code> when clamped, full <code>fg</code> when expanded. Footer dashed-top divider with 9px gap.
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · NOT a card</div>
+      Quick log notes and command receipts are <strong>NOT</strong> cards — they're sidebar entries with a 2px left bar (amber for notes, teal for receipts), 8/12 padding, no shadow, max-width 580px. Inline with the feed but visually quieter. This is the visual difference between an artifact (transcript, analysis) and a log entry (note, receipt) — preserve it.
+    </div>
+
+    <!-- 1.3 Card states -->
+    <div class="sub">
+      <div class="sub-eyebrow">1.3 · Card states</div>
+      <h3 class="sub-h">Default · expanded · with replies · focused</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Four states · same entry (analysis)</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <div class="frame-label">Default · 2-line clamp</div>
+          <div class="entry">
+            <div class="entry-h">
+              <div class="entry-chip analysis"><i data-lucide="brain"></i></div>
+              <div class="entry-meta">
+                <div class="entry-title">Supervision analysis · IFS lens</div>
+                <div class="entry-sub">3 min after session</div>
+              </div>
+              <span class="entry-author ai">AI</span>
+            </div>
+            <div class="entry-body clamp">A <em>Manager part</em> ran most of the hour — closing loops, action-planning, citing the org chart. The Exile material — grief about Jordan, the father echo — only appeared…</div>
+            <div class="entry-foot"><a>Expand →</a></div>
+          </div>
+        </div>
+        <div>
+          <div class="frame-label">Expanded</div>
+          <div class="entry">
+            <div class="entry-h">
+              <div class="entry-chip analysis"><i data-lucide="brain"></i></div>
+              <div class="entry-meta">
+                <div class="entry-title">Supervision analysis · IFS lens</div>
+                <div class="entry-sub">3 min after session</div>
+              </div>
+              <span class="entry-author ai">AI</span>
+            </div>
+            <div class="entry-body">A <em>Manager part</em> ran most of the hour — closing loops, action-planning, citing the org chart. The Exile material — grief about Jordan, the father echo — only appeared in the last twelve minutes and you let it pass without naming. Worth interrogating.</div>
+            <div class="entry-foot"><a>Collapse</a><a>Reply</a></div>
+          </div>
+        </div>
+        <div>
+          <div class="frame-label">With replies (count badge)</div>
+          <div class="entry">
+            <div class="entry-h">
+              <div class="entry-chip analysis"><i data-lucide="brain"></i></div>
+              <div class="entry-meta">
+                <div class="entry-title">Supervision analysis · IFS lens</div>
+                <div class="entry-sub">3 min after session</div>
+              </div>
+              <span class="entry-author ai">AI</span>
+            </div>
+            <div class="entry-body clamp">A <em>Manager part</em> ran most of the hour — closing loops, action-planning, citing the org chart. The Exile material — grief about Jordan, the father echo — only appeared…</div>
+            <div class="entry-foot">
+              <a>Expand →</a>
+              <span class="replies"><i data-lucide="message-circle"></i>3 replies · last from supervisor</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="frame-label">Focused (linked from elsewhere)</div>
+          <div class="entry focused">
+            <div class="entry-h">
+              <div class="entry-chip analysis"><i data-lucide="brain"></i></div>
+              <div class="entry-meta">
+                <div class="entry-title">Supervision analysis · IFS lens</div>
+                <div class="entry-sub">3 min after session</div>
+              </div>
+              <span class="entry-author ai">AI</span>
+            </div>
+            <div class="entry-body">A <em>Manager part</em> ran most of the hour — closing loops, action-planning, citing the org chart. Worth interrogating.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · focused state</div>
+      When an entry is opened from elsewhere (a Home pattern, a follow-up, a `?entry=` deep-link), border becomes <code>coaching-500</code>, add a 3px <code>hsla(184,82%,26%,.12)</code> ring, and scroll into view with 24px top offset. Auto-clear focus on next click anywhere else (do <strong>not</strong> use scrollIntoView API — set scrollTop manually).
+    </div>
+
+    <!-- 1.4 Mobile thread -->
+    <div class="sub">
+      <div class="sub-eyebrow">1.4 · Mobile (≤920px)</div>
+      <h3 class="sub-h">Single column, drawer becomes bottom sheet</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Mobile thread · 320px frame</div>
+      <div class="mobile-frame">
+        <div class="mobile-bar-mock">
+          <span>9:41</span>
+          <span style="display:flex;gap:4px;align-items:center"><i data-lucide="signal" style="width:11px;height:11px"></i><i data-lucide="wifi" style="width:11px;height:11px"></i><i data-lucide="battery-full" style="width:14px;height:11px"></i></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 4px 12px;border-bottom:1px solid var(--border)">
+          <i data-lucide="arrow-left" style="width:18px;height:18px;color:var(--muted-fg)"></i>
+          <div style="font-family:'Newsreader',serif;font-weight:600;font-size:16px;color:var(--ink)">Alex Chen</div>
+          <i data-lucide="folder-open" style="width:18px;height:18px;color:var(--muted-fg);margin-left:auto"></i>
+        </div>
+        <!-- Briefing -->
+        <div class="brief-collapsed" style="margin: 12px 0 14px; max-width: 100%; padding: 10px 12px;">
+          <div class="ico" style="width:24px;height:24px"><i data-lucide="compass"></i></div>
+          <div class="t" style="font-size:12px"><span class="lab">Briefing · Thu 9am</span>Start somatic. He'll arrive with a decision already made.</div>
+          <div class="chev"><i data-lucide="chevron-down"></i></div>
+        </div>
+
+        <div class="day-div"><div class="line"></div><span>Today</span><div class="line"></div></div>
+
+        <div class="entry" style="padding:12px 14px">
+          <div class="entry-h" style="margin-bottom:6px">
+            <div class="entry-chip analysis" style="width:26px;height:26px"><i data-lucide="brain"></i></div>
+            <div class="entry-meta">
+              <div class="entry-title" style="font-size:12.5px">IFS lens · session 8</div>
+              <div class="entry-sub" style="font-size:10px">3 min ago</div>
+            </div>
+            <span class="entry-author ai" style="font-size:8.5px">AI</span>
+          </div>
+          <div class="entry-body clamp" style="font-size:13px">A <em>Manager part</em> ran most of the hour. Worth interrogating: is this a preference, or countertransference…</div>
+        </div>
+
+        <div class="note-entry" style="margin: 8px 0 10px; max-width:100%; padding: 6px 10px 6px 12px">
+          <span class="note-time">9:14</span>
+          <div class="note-body" style="font-size:12.5px"><span class="note-lab">Note</span>Don't lead with the deck.</div>
+        </div>
+
+        <div class="cmd-conf" style="max-width:100%; padding:6px 10px">
+          <span class="ico" style="width:18px;height:18px"><i data-lucide="check"></i></span>
+          <span class="t" style="font-size:11px">Added pattern · <em>Reschedule before hard talk</em> · 3×</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · mobile shifts</div>
+      Three-column layout collapses to single column. Right rail (notebook) becomes a swipe-up bottom sheet with a 4px-tall gold pill handle. Drawer (filing cabinet) becomes the same bottom sheet, second tab. Briefing card padding tightens to 10px 12px. Entry card padding tightens to 12px 14px. Author pill font drops to 8.5px. Hit targets stay ≥44px on all interactive elements (chips, expand buttons, compose tools).
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════
+       2 · CANCELLED / RESCHEDULED  (Request 1 · P2)
+       ════════════════════════════════════════════════ -->
+  <section class="section" id="r1">
+    <div class="section-head">
+      <div class="section-num">02 · Cancelled &amp; rescheduled <span class="priority p2">P2 · Daily</span></div>
+      <h2 class="section-h">Visible, but <em>quiet</em>.</h2>
+      <p class="section-sub">Coaches reschedule a lot. The card needs to register the change without judgment, keep awareness ("I knew that was the one I lost"), and fade visually so it doesn't compete with the live sessions for attention. <strong>Default behavior: dashed strikethrough.</strong> Don't hide cancelled cards — coaches lose track when sessions silently disappear.</p>
+    </div>
+
+    <!-- Decision summary -->
+    <div class="decision">
+      <div class="decision-lab">Decisions</div>
+      <div class="decision-h">Cancelled → <em>strike-through with CANCELLED pill</em>, dashed border, 60% opacity. Rescheduled → <em>amber pill, old time crossed out, new time below</em>. Empty day (all cancelled) → <em>warm prompt card</em>, not a hero panel.</div>
+      <div class="decision-rationale">Awareness over noise. The card's information stays — only its visual weight changes. The reflection prompt steps in when the day clears, not when one session moves.</div>
+    </div>
+
+    <!-- 2.1 Cancelled card -->
+    <div class="sub">
+      <div class="sub-eyebrow">2.1 · Cancelled session card</div>
+      <h3 class="sub-h">Same shape, struck through</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Today's pages · with one cancelled in slot 2</div>
+      <div class="nb-today-grid">
+        <div class="nb-page-card next">
+          <div class="nb-page-time"><strong>10:00</strong>in 1h 13m · in person</div>
+          <div class="nb-page-name">Alex Chen</div>
+          <div class="nb-page-phase">S9/12 · active · CPO @ Stripe</div>
+          <p class="nb-page-hint">Closing the <em>perfectionism → delegation</em> arc.</p>
+          <div class="nb-page-prep"><i data-lucide="check"></i>Briefing is ready</div>
+        </div>
+        <div class="nb-page-card cancelled">
+          <div class="nb-page-time"><strong>13:30</strong>this afternoon · video</div>
+          <div class="nb-page-name">Mia Tanaka</div>
+          <div class="nb-page-phase">S14 · deepening</div>
+          <p class="nb-page-hint">Cancelled this morning · she'll reschedule next week.</p>
+        </div>
+        <div class="nb-page-card">
+          <div class="nb-page-time"><strong>16:00</strong>late afternoon · video</div>
+          <div class="nb-page-name">Daniel Kim</div>
+          <div class="nb-page-phase">S6 · deepening</div>
+          <p class="nb-page-hint">First session after the boundary commitment. Watch for retreat.</p>
+          <div class="nb-page-prep" style="color:var(--ink-quiet)"><i data-lucide="alert-circle"></i>Briefing not ready</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · cancelled card</div>
+      Background switches from <code>#fff</code> to <code>--paper-soft</code>. Border becomes <strong>dashed</strong>, color stays <code>--line-soft</code>. Drop the box-shadow. Time text and name get strikethrough (1px solid <code>--ink-quiet</code>). Hint text replaces the session preview with: <em>"Cancelled this morning · she'll reschedule next week"</em> — drawn from the calendar event's notes if available, fallback "Cancelled · no reason given." Top-right corner: red pill <code>CANCELLED</code> in JetBrains Mono 9px/700, <code>#fef2f2</code> bg, <code>#991b1b</code> fg, 2/7 padding. Card stays <strong>clickable</strong> — opens the thread (so the coach can write a reflection if appropriate).
+    </div>
+
+    <!-- 2.2 Rescheduled -->
+    <div class="sub">
+      <div class="sub-eyebrow">2.2 · Rescheduled card</div>
+      <h3 class="sub-h">Old time crossed out, new time visible</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Single rescheduled card · close-up</div>
+      <div style="max-width:280px">
+        <div class="nb-page-card rescheduled">
+          <div class="nb-page-time"><span class="nb-old-time">14:00</span><strong>16:30</strong>moved 2.5h later · video</div>
+          <div class="nb-page-name">Mia Tanaka</div>
+          <div class="nb-page-phase">S14 · deepening · VP Eng @ Datadog</div>
+          <p class="nb-page-hint">Three sessions circling the <em>same shape</em> — boss as father.</p>
+          <div class="nb-page-prep"><i data-lucide="check"></i>Briefing ready</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · rescheduled card</div>
+      Card chrome unchanged — the schedule visibly changed, but the prep is still valid. <strong>Time row</strong>: old time inline before the new time, strike-through in <code>--ink-quiet</code>, then new time in normal <code>--ink</code> bold. Replace "in 1h 13m" descriptor with <em>"moved 2.5h later"</em> when the change is &gt;30 min, otherwise omit. Top-right: amber pill <code>RESCHEDULED</code> (<code>#fef3c7</code> bg, <code>#92400e</code> fg). Persists for the full day; clears at midnight.
+    </div>
+
+    <!-- 2.3 Empty day -->
+    <div class="sub">
+      <div class="sub-eyebrow">2.3 · Empty day · all cancelled</div>
+      <h3 class="sub-h">A reflection nudge, not a void</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">All sessions cancelled today</div>
+      <div class="empty-day-card">
+        <div class="empty-day-eye">All clear · today</div>
+        <h4 class="empty-day-h">Three sessions moved. The afternoon is <em>yours</em>.</h4>
+        <p class="empty-day-sub">There are <strong>two reflections owed</strong> from earlier this week — Alex's S8 and Daniel's S5. Or take the morning back.</p>
+        <button class="empty-day-cta">Open reflections owed <i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · empty-day card</div>
+      Replaces the <code>.nb-today-grid</code> entirely when 100% of today's sessions are cancelled. Single card, max-width 640px, left-aligned. Padding 36/32. Background gradient <code>--paper-soft → #fff</code>. Eye color <code>--coaching-700</code>. Heading 24px Newsreader 500/-0.015em. CTA copy is generated from the actual reflections-owed count — never hardcoded. <strong>Do not show this card</strong> if today simply had zero booked sessions — that's a different state (Section 04).
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════
+       3 · NON-COACHING EVENTS  (Request 3 · P2)
+       ════════════════════════════════════════════════ -->
+  <section class="section" id="r3">
+    <div class="section-head">
+      <div class="section-num">03 · Non-coaching events <span class="priority p2">P2 · Reduces noise</span></div>
+      <h2 class="section-h">A footer log, <em>not a banner</em>.</h2>
+      <p class="section-sub">When the AI pre-screen detects a calendar event isn't a coaching session — a team standup, a sales call — the coach should know it was skipped, and have a one-click way to override if the AI was wrong. <strong>Default treatment: a quiet "Other today" footer at the bottom of Home,</strong> not a toast or banner. The point is to reduce noise, not introduce a new noisy surface.</p>
+    </div>
+
+    <div class="decision">
+      <div class="decision-lab">Decisions</div>
+      <div class="decision-h">Skipped events → <em>quiet log at the bottom of Home</em>. Override → <em>inline button on the row, no separate review screen</em>. Footnote count → <em>integrated into the row header, not a hover.</em></div>
+      <div class="decision-rationale">Coaches glance at Home all day. A toast is intrusive; a settings screen is forgotten. A bottom log is exactly the right priority — visible if you scroll, invisible if you don't need it.</div>
+    </div>
+
+    <!-- 3.1 Footer log -->
+    <div class="sub">
+      <div class="sub-eyebrow">3.1 · Skipped events log</div>
+      <h3 class="sub-h">Bottom of Home, after Quieter side</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Home · final scroll position</div>
+      <div class="nb-section-eye">
+        <i data-lucide="filter"></i>Other today
+        <span style="font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;font-weight:400;font-size:11.5px;color:var(--ink-quiet);margin-left:6px">3 events skipped</span>
+        <span class="tail">Hide</span>
+      </div>
+      <div class="skipped-list">
+        <div class="skipped-row">
+          <div class="skipped-time">9:00</div>
+          <div class="skipped-body">
+            <strong>Eng all-hands</strong> · 30 min · 24 attendees
+            <span class="skipped-tag">Not coaching</span>
+          </div>
+          <span class="skipped-action">Actually a session ↗</span>
+        </div>
+        <div class="skipped-row">
+          <div class="skipped-time">11:30</div>
+          <div class="skipped-body">
+            <strong>Sales call · Acme Corp</strong> · 45 min · external
+            <span class="skipped-tag">Not coaching</span>
+          </div>
+          <span class="skipped-action">Actually a session ↗</span>
+        </div>
+        <div class="skipped-row">
+          <div class="skipped-time">15:00</div>
+          <div class="skipped-body">
+            <strong>1:1 with Sam</strong> · 30 min · recurring
+            <span class="skipped-tag">Personal</span>
+          </div>
+          <span class="skipped-action">Actually a session ↗</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · skipped log</div>
+      Section eye uses <code>filter</code> icon (NOT alert-circle — this isn't a problem). Count is plain Inter, not the mono pill — it's a footnote, not a badge. List container: <code>--paper-soft</code> bg, dashed 1px border, 4px radius, 14/18 padding. Each row: 3-col grid (<code>60px 1fr auto</code>). Time mono 10.5/600. Body Newsreader serif 14, name bold (Inter inherits). Tag pill: 9.5px mono uppercase, white bg, dotted border, mono in <code>--ink-quiet</code>. <strong>Action link</strong> ("Actually a session ↗") opens the override dialog (Section 3.2). Section header has a "Hide" affordance — sets a per-day localStorage flag (clears at midnight).
+    </div>
+
+    <!-- 3.2 Override dialog -->
+    <div class="sub">
+      <div class="sub-eyebrow">3.2 · Override dialog</div>
+      <h3 class="sub-h">"Actually a session" → assign in two clicks</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Inline override popover</div>
+      <div style="max-width:480px;background:#fff;border:1px solid var(--line-soft);border-radius:6px;padding:20px 22px;box-shadow:0 12px 40px -12px rgba(90,70,40,.18)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--coaching-700);margin-bottom:8px">Override · pre-screen</div>
+        <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:500;line-height:1.35;color:var(--ink);margin-bottom:14px;letter-spacing:-0.015em">Process <em style="font-style:italic;color:var(--coaching-700)">"Sales call · Acme Corp"</em> as a coaching session?</div>
+        <div style="font-family:'Inter',sans-serif;font-size:12.5px;color:var(--ink-mute);line-height:1.55;margin-bottom:16px">We'll pull the transcript, run extraction, and assign it to the client you pick.</div>
+
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-quiet);margin-bottom:6px">Assign to client</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line-soft);border-radius:6px;background:var(--paper-soft);font-family:'Inter',sans-serif;font-size:13px;color:var(--ink-mute);margin-bottom:14px">
+          <i data-lucide="search" style="width:13px;height:13px"></i>
+          <span>Type a client name…</span>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-quiet);background:#fff;padding:1px 5px;border-radius:3px;border:1px solid var(--line-soft)">⏎</span>
+        </div>
+
+        <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-mute);font-style:italic;margin-bottom:14px;line-height:1.5">Don't see them? <a style="color:var(--coaching-700);font-style:normal;font-weight:500">Add as a new client →</a></div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;font-family:'Inter',sans-serif">
+          <button style="padding:7px 14px;border-radius:6px;border:1px solid var(--line-soft);background:#fff;font-size:13px;color:var(--ink-soft);cursor:pointer;font-family:inherit">Cancel</button>
+          <button style="padding:7px 14px;border-radius:6px;border:1px solid var(--coaching-500);background:var(--coaching-500);color:#fff;font-size:13px;cursor:pointer;font-family:inherit">Process &amp; assign</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · override popover</div>
+      Triggered from the row's "Actually a session" link. Popover, not full dialog — 480px max, anchored to the row. Client picker is a typeahead against the user's <code>Client</code> table. Enter (⏎) selects highlighted; Escape dismisses. "Add as new client" inlines the creation — name + role only — and auto-assigns on save. Once processed, the row drops out of "Other today" and appears in "Today's pages" (or "Reflections owed" if it ran earlier).
+    </div>
+
+    <!-- 3.3 Optional toast -->
+    <div class="sub">
+      <div class="sub-eyebrow">3.3 · Optional one-time toast (alternate)</div>
+      <h3 class="sub-h">For coaches who want a louder signal</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Settings → Notifications · per-coach preference</div>
+      <div style="max-width:520px;background:#fff;border:1px solid var(--line-soft);border-radius:6px;padding:18px 22px;box-shadow:0 1px 0 var(--line)">
+        <div style="font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:4px">Notify me when an event is auto-skipped</div>
+        <div style="font-family:'Newsreader',serif;font-size:13px;font-style:italic;color:var(--ink-mute);margin-bottom:14px">A toast appears for ~6 seconds when Coach Claude decides a calendar event isn't coaching. Off by default — most coaches use the bottom-of-Home log instead.</div>
+        <div style="display:flex;gap:8px;font-family:'Inter',sans-serif;font-size:13px">
+          <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="t" checked /> Off (default)</label>
+          <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin-left:18px"><input type="radio" name="t" /> Toast on skip</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · why log over toast (default)</div>
+      We considered three options: toast, banner, log. Toast interrupts; coaches told us the dashboard is meant to feel calm. Banner persists and adds visual weight. The bottom-of-page log is the editorial choice — present if needed, absent in attention. The toast is exposed as a per-coach preference in Settings → Notifications for coaches who want stronger signals.
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════
+       4 · SPARSE HOME LAYOUTS  (Request 5 · P3)
+       ════════════════════════════════════════════════ -->
+  <section class="section" id="r5">
+    <div class="section-head">
+      <div class="section-num">04 · Sparse home <span class="priority p3">P3 · Polish</span></div>
+      <h2 class="section-h">When the day is <em>quieter</em>.</h2>
+      <p class="section-sub">The 3-up grid was specced for the modal day — three or more sessions. With one session, two sessions, or none, the same grid looks like a card with empty parking lots beside it. <strong>The grid responds to its content.</strong> Fewer cards means more breathing room, more typographic detail, and a different surrounding context.</p>
+    </div>
+
+    <!-- 4.1 1-session -->
+    <div class="sub">
+      <div class="sub-eyebrow">4.1 · One session today</div>
+      <h3 class="sub-h">A single, larger card · with prep summary visible</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">1-session day · single column, 560px max</div>
+      <div class="nb-date">Tuesday · April 28 · 8:32 am</div>
+      <h2 class="nb-greeting-h">Good morning, <em>Dana</em>.</h2>
+      <p class="nb-greeting-sub">One session today — <strong>Alex Chen at 14:00</strong>. The morning is yours. You left S8 with a note: <em>the tightness at minute 35</em>.</p>
+      <div class="nb-section-eye">Today · 1 session</div>
+      <div class="nb-today-grid one">
+        <div class="nb-page-card next" style="padding: 26px 28px 22px;">
+          <div class="nb-page-time"><strong>14:00</strong>this afternoon · in person · 60 min</div>
+          <div class="nb-page-name" style="font-size: 26px">Alex Chen</div>
+          <div class="nb-page-phase">S9/12 · active · CPO @ Stripe</div>
+          <p class="nb-page-hint" style="font-size: 15.5px">Closing the <em>perfectionism → delegation</em> arc. He'll arrive with <strong>a new deck</strong> — slow him down, ask what shifted between last night and now. Also — check whether <strong>your own tightness</strong> at minute 35 resurfaces.</p>
+          <div class="nb-page-prep"><i data-lucide="check"></i>Briefing is ready · open it</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · single-session shifts</div>
+      Grid becomes <code>1fr</code>, max-width 560px (left-aligned, NOT centered — keeps continuity with the rest of the page). Card padding bumps to 26/28. Name size to 26px (from 21). Hint allows up to 4 lines instead of clamping at 2 — there's space, use it. Greeting subtitle re-narrates: "One session today — name at time. The morning is yours / the afternoon is yours."
+    </div>
+
+    <!-- 4.2 2-session -->
+    <div class="sub">
+      <div class="sub-eyebrow">4.2 · Two sessions today</div>
+      <h3 class="sub-h">Two cards, 720px frame</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">2-session day</div>
+      <div class="nb-date">Friday · April 24 · 9:14 am</div>
+      <h2 class="nb-greeting-h">Good morning, <em>Dana</em>.</h2>
+      <p class="nb-greeting-sub">Two sessions on the schedule — <strong>Mia at 11:00</strong> then <strong>Daniel at 15:30</strong>. Worth holding the gap.</p>
+      <div class="nb-section-eye">Today · 2 sessions</div>
+      <div class="nb-today-grid two">
+        <div class="nb-page-card next">
+          <div class="nb-page-time"><strong>11:00</strong>in 1h 46m · video</div>
+          <div class="nb-page-name">Mia Tanaka</div>
+          <div class="nb-page-phase">S14 · deepening · VP Eng @ Datadog</div>
+          <p class="nb-page-hint">Three sessions circling the <em>same shape</em> — boss as father. Worth sitting with, not rushing to interpret.</p>
+          <div class="nb-page-prep"><i data-lucide="check"></i>Briefing ready</div>
+        </div>
+        <div class="nb-page-card">
+          <div class="nb-page-time"><strong>15:30</strong>this afternoon · video</div>
+          <div class="nb-page-name">Daniel Kim</div>
+          <div class="nb-page-phase">S6 · deepening</div>
+          <p class="nb-page-hint">First session after the boundary commitment. Watch for <em>retreat into strategy</em>.</p>
+          <div class="nb-page-prep"><i data-lucide="check"></i>Briefing ready</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · two-session shifts</div>
+      Grid is <code>1fr 1fr</code>, max-width 720px. Cards match the 3-up size — <strong>do not</strong> grow them. The breathing room comes from the parent column, not the cards themselves. Greeting subtitle re-narrates with both names.
+    </div>
+
+    <!-- 4.3 0-session -->
+    <div class="sub">
+      <div class="sub-eyebrow">4.3 · No sessions today (but you have clients)</div>
+      <h3 class="sub-h">A look-back card, not an emptiness</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">0-session day · existing coach</div>
+      <div class="nb-date">Saturday · April 26 · 10:02 am</div>
+      <h2 class="nb-greeting-h">Good morning, <em>Dana</em>.</h2>
+      <p class="nb-greeting-sub">No sessions on the calendar today. A good day for the longer view — or the reflections you've been carrying.</p>
+
+      <div class="empty-day-card">
+        <div class="empty-day-eye">A quieter day</div>
+        <h4 class="empty-day-h">Three reflections owed · the oldest is <em>nine days back</em>.</h4>
+        <p class="empty-day-sub">Mia's S13, Alex's S8, and Daniel's S5 — all transcribed, none reflected. The longer they sit, the lossier the recall.</p>
+        <div style="display:flex;gap:8px;font-family:'Inter',sans-serif">
+          <button class="empty-day-cta" style="background:var(--coaching-500);color:#fff;border-color:var(--coaching-500)">Open reflections owed <i data-lucide="arrow-right"></i></button>
+          <button class="empty-day-cta">Look at this week's patterns</button>
+        </div>
+      </div>
+
+      <div class="nb-section-eye" style="margin-top:36px">The week ahead</div>
+      <div style="font-family:'Newsreader',serif;font-size:14.5px;color:var(--ink-mute);font-style:italic;line-height:1.55">
+        <strong style="font-style:normal;color:var(--ink)">Mon</strong> · Alex 10am, Priya 2pm. <strong style="font-style:normal;color:var(--ink)">Tue</strong> · Daniel 11am. <strong style="font-style:normal;color:var(--ink)">Wed</strong> · open. <strong style="font-style:normal;color:var(--ink)">Thu</strong> · Rahul 4pm. <strong style="font-style:normal;color:var(--ink)">Fri</strong> · Mia 11am, Daniel 3:30pm.
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · 0-session existing-coach state</div>
+      <strong>Hide</strong> the <code>.nb-today-grid</code> entirely (don't render an empty grid). In its place: the empty-day card from Section 02. Below it, <strong>show the week-ahead row inline</strong> as a single-line italic narrative ("Mon · Alex 10am, Priya 2pm…") — NOT the grid version. This is the calmest day of the week; the page should breathe. If <strong>also</strong> no reflections owed, swap the empty-day-card to a single-line "Take the day. See you tomorrow." with no CTAs.
+    </div>
+
+    <!-- 4.4 New coach empty state -->
+    <div class="sub">
+      <div class="sub-eyebrow">4.4 · Brand-new coach (zero sessions ever)</div>
+      <h3 class="sub-h">Onboarding-adjacent · but never <em>"complete your profile!"</em></h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">First post-onboarding visit · 0 sessions, 0 clients (or clients but no sessions)</div>
+      <div class="nb-date">Wednesday · April 23 · 9:11 am</div>
+      <h2 class="nb-greeting-h">Welcome, <em>Dana</em>.</h2>
+      <p class="nb-greeting-sub">This is your home base. Each morning it'll show you the day's sessions, the reflections you owe, and what's worth noticing across your book. Right now it's quiet — that's the part you fill in.</p>
+
+      <div class="empty-day-card" style="max-width:760px">
+        <div class="empty-day-eye">Two ways to start</div>
+        <h4 class="empty-day-h">Drop in your <em>last session</em>, or <em>connect</em> a client.</h4>
+        <p class="empty-day-sub">Coach Claude works best with a real session in front of it — even one. We'll run an analysis, write a reflection, and start tracking the patterns. By session four, the briefings start to feel uncannily good.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;font-family:'Inter',sans-serif">
+          <button class="empty-day-cta" style="background:var(--coaching-500);color:#fff;border-color:var(--coaching-500)"><i data-lucide="upload"></i>Drop in a session</button>
+          <button class="empty-day-cta"><i data-lucide="user-plus"></i>Add a client</button>
+          <button class="empty-day-cta"><i data-lucide="book-open"></i>Read a sample reflection</button>
+        </div>
+      </div>
+
+      <div class="nb-reflect" style="margin-top:36px">
+        <div class="nb-reflect-lab"><i data-lucide="quote"></i>Practice prompt · while you wait</div>
+        <p class="nb-reflect-q">"What would you want a supervisor to notice in your last session — that you couldn't quite name yourself?"</p>
+        <div class="nb-reflect-tail">
+          <button class="prim">Write a line</button>
+          <button>Not now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · new-coach state</div>
+      Replace "Good morning" with "Welcome" for the first visit — flip on a flag <code>User.firstHomeVisitAt</code> after the second visit. The greeting subtitle is a one-paragraph product pitch in voice (not a bulleted feature list — it's still a notebook). Three CTAs: capture, add client, read sample. The <strong>practice prompt strip</strong> (gold reflection card) does double duty here — it gives the coach something to do while the empty state resolves itself organically.
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════
+       5 · YOUR LIBRARY  (Request 2 · P3)
+       ════════════════════════════════════════════════ -->
+  <section class="section" id="r2">
+    <div class="section-head">
+      <div class="section-num">05 · Your Library <span class="priority p3">P3 · New surface</span></div>
+      <h2 class="section-h">Reference materials, <em>folded into supervision</em>.</h2>
+      <p class="section-sub">Books, frameworks, articles the coach wants Claude to draw on. <strong>Lives as a fourth tab in My Practice</strong> — Approach · Learning · <strong>Library</strong> · Report — because it sits alongside CoachContext and Learning as part of the coach's living philosophy. Not Settings (it's not a config), not its own route (it's not a destination). The trust signal is critical: coaches need to see <em>how</em> these materials feed the supervision, or it feels like an abandoned upload form.</p>
+    </div>
+
+    <div class="decision">
+      <div class="decision-lab">Decisions</div>
+      <div class="decision-h">Placement → <em>4th tab in My Practice</em>. Layout → <em>upload zone above, three-column grid of journal-cards below, grouped by type</em>. Trust signal → <em>persistent strip showing "Claude references these when reviewing your sessions"</em>.</div>
+    </div>
+
+    <!-- 5.1 Empty state -->
+    <div class="sub">
+      <div class="sub-eyebrow">5.1 · Empty state</div>
+      <h3 class="sub-h">No materials yet</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">My Practice → Library tab · empty</div>
+      <div class="practice-tabs">
+        <button class="practice-tab">Approach</button>
+        <button class="practice-tab">Learning</button>
+        <button class="practice-tab on">Library</button>
+        <button class="practice-tab">Report</button>
+      </div>
+
+      <div class="lib-empty">
+        <h3 class="lib-empty-h">Build the bookshelf <em>once</em>.</h3>
+        <p class="lib-empty-sub">Drop in books, frameworks, articles you draw from — <em>Schwartz on IFS</em>, <em>Kets de Vries on the leader on the couch</em>, the polyvagal essay you keep coming back to. Claude will reference them when it analyzes your sessions.</p>
+        <div class="lib-upload-actions">
+          <button class="lib-upload-btn prim"><i data-lucide="upload"></i>Upload a file</button>
+          <button class="lib-upload-btn"><i data-lucide="link"></i>Add a URL</button>
+          <button class="lib-upload-btn"><i data-lucide="message-square-quote"></i>Save from Claude</button>
+        </div>
+      </div>
+
+      <div class="lib-trust">
+        <span class="ico"><i data-lucide="shield-check"></i></span>
+        <span>Claude references your library <strong>only</strong> when reviewing your own sessions. Materials stay in your account, encrypted at rest, never used for training.</span>
+      </div>
+    </div>
+
+    <!-- 5.2 Populated -->
+    <div class="sub">
+      <div class="sub-eyebrow">5.2 · Populated · 6 items across 3 categories</div>
+      <h3 class="sub-h">Grouped by type, journal-card style</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">Library · 6 items</div>
+      <div class="practice-tabs">
+        <button class="practice-tab">Approach</button>
+        <button class="practice-tab">Learning</button>
+        <button class="practice-tab on">Library</button>
+        <button class="practice-tab">Report</button>
+      </div>
+
+      <div class="lib-upload">
+        <h3 class="lib-upload-h">Add to the bookshelf</h3>
+        <p class="lib-upload-sub">Drag a PDF, paste a URL, or save a Claude response. We'll figure out the type.</p>
+        <div class="lib-upload-actions">
+          <button class="lib-upload-btn prim"><i data-lucide="upload"></i>Upload</button>
+          <button class="lib-upload-btn"><i data-lucide="link"></i>Paste URL</button>
+          <button class="lib-upload-btn"><i data-lucide="message-square-quote"></i>From conversation</button>
+        </div>
+      </div>
+
+      <div class="nb-section-eye" style="margin-top:32px">Books · 2</div>
+      <div class="lib-grid">
+        <div class="lib-card">
+          <div class="lib-card-head">
+            <span class="lib-icon book"><i data-lucide="book"></i></span>
+            <span class="lib-type book">Book</span>
+          </div>
+          <div class="lib-card-t">No Bad Parts</div>
+          <div class="lib-card-author">Richard Schwartz · 2021</div>
+          <div class="lib-card-desc">Internal Family Systems. The accessible introduction — Claude pulls vocabulary and case examples from here.</div>
+          <div class="lib-card-foot"><span>Added Apr 12</span><span>284 pp</span></div>
+        </div>
+        <div class="lib-card">
+          <div class="lib-card-head">
+            <span class="lib-icon book"><i data-lucide="book"></i></span>
+            <span class="lib-type book">Book</span>
+          </div>
+          <div class="lib-card-t">The Leader on the Couch</div>
+          <div class="lib-card-author">Manfred Kets de Vries · 2006</div>
+          <div class="lib-card-desc">Clinical leadership archetypes. Heavy use for executive transference work — narcissistic dynamics, organizational pathology.</div>
+          <div class="lib-card-foot"><span>Added Apr 12</span><span>376 pp</span></div>
+        </div>
+        <div class="lib-card" style="background:var(--paper-soft);border-style:dashed;cursor:default;color:var(--ink-quiet);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:140px">
+          <i data-lucide="plus" style="width:18px;height:18px;color:var(--ink-quiet);margin-bottom:6px"></i>
+          <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-quiet)">Add another book</div>
+        </div>
+      </div>
+
+      <div class="nb-section-eye" style="margin-top:28px">Frameworks · 2</div>
+      <div class="lib-grid">
+        <div class="lib-card">
+          <div class="lib-card-head">
+            <span class="lib-icon framework"><i data-lucide="grid-3x3"></i></span>
+            <span class="lib-type framework">Framework</span>
+          </div>
+          <div class="lib-card-t">Polyvagal Theory · ventral / sympathetic / dorsal</div>
+          <div class="lib-card-author">Stephen Porges · adapted for clinicians</div>
+          <div class="lib-card-desc">Nervous system states. You asked Claude to flag when a session crosses thresholds — this is the source.</div>
+          <div class="lib-card-foot"><span>Added Apr 14</span><span>3 pp · adapted</span></div>
+        </div>
+        <div class="lib-card">
+          <div class="lib-card-head">
+            <span class="lib-icon framework"><i data-lucide="grid-3x3"></i></span>
+            <span class="lib-type framework">Framework</span>
+          </div>
+          <div class="lib-card-t">Process / Content dance</div>
+          <div class="lib-card-author">Your own write-up · Apr 18</div>
+          <div class="lib-card-desc">When to track <em>what</em> the client says vs. <em>how</em>. Calibrated against your last 12 sessions.</div>
+          <div class="lib-card-foot"><span>Added Apr 18</span><span>From conversation</span></div>
+        </div>
+      </div>
+
+      <div class="nb-section-eye" style="margin-top:28px">Articles &amp; essays · 2</div>
+      <div class="lib-grid">
+        <div class="lib-card">
+          <div class="lib-card-head">
+            <span class="lib-icon article"><i data-lucide="file-text"></i></span>
+            <span class="lib-type article">Article</span>
+          </div>
+          <div class="lib-card-t">The Coach as Container</div>
+          <div class="lib-card-author">Erica Ariel Fox · HBR · 2019</div>
+          <div class="lib-card-desc">Holding space without losing the container. You bookmarked this twice.</div>
+          <div class="lib-card-foot"><span>Added Apr 09</span><span>HBR · web</span></div>
+        </div>
+        <div class="lib-card">
+          <div class="lib-card-head">
+            <span class="lib-icon article"><i data-lucide="file-text"></i></span>
+            <span class="lib-type article">Article</span>
+          </div>
+          <div class="lib-card-t">Countertransference in Executive Coaching</div>
+          <div class="lib-card-author">Tatiana Bachkirova · 2018</div>
+          <div class="lib-card-desc">The taxonomy of countertransference moves. Claude uses this when flagging your own pulls.</div>
+          <div class="lib-card-foot"><span>Added Apr 09</span><span>21 pp · PDF</span></div>
+        </div>
+      </div>
+
+      <div class="lib-trust">
+        <span class="ico"><i data-lucide="shield-check"></i></span>
+        <span>Claude references these <strong>when reviewing your sessions</strong>. They never leave your account, are never used for training, and you can remove any item to take it out of the supervision context immediately.</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · upload zone</div>
+      Three intake paths in one strip. <strong>Drag-and-drop</strong> the entire zone (whole strip is the dropzone — visual hint only on dragover). <strong>Paste URL</strong> opens an inline field that runs an embed extraction (article title, author, summary). <strong>From conversation</strong> opens a picker over the user's chat history with Claude — pick a turn, save the response as a "Framework" by default, editable. All three create a <code>Resource</code> row on save (existing model in the schema).
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · journal-card pattern</div>
+      Each card matches <code>.nb-page-card</code>: 4px radius, 1px <code>--line-soft</code> border, <code>0 1px 0 --line</code> shadow (the "page-stack" feel). 16/18 padding. Type chip + icon at top in JetBrains Mono 9.5/700 uppercase. Title 17px Newsreader 600/-0.01em. Author italic Newsreader 13. Description 13px Newsreader regular, max 3 lines. Footer dashed-top with mono micrometadata. Hover: 1px translate-up + softer shadow.
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · trust strip</div>
+      Always present at the bottom, never dismissable. Italic Newsreader 13.5/serif body — explicitly <em>not</em> a banner. The "shield-check" icon is the same teal as <code>--coaching-700</code>. This is the line that pulls weight: it tells coaches the materials feed the analysis, and that they're locked in. Without this strip, the Library reads as an abandoned filing cabinet.
+    </div>
+
+  </section>
+
+  <div class="doc-rule"></div>
+
+  <!-- ════════════════════════════════════════════════
+       6 · DICTATION MODE  (Request 6 · P4)
+       ════════════════════════════════════════════════ -->
+  <section class="section" id="r6">
+    <div class="section-head">
+      <div class="section-num">06 · Dictation mode <span class="priority p4">P4 · Nice-to-have</span></div>
+      <h2 class="section-h">Speak it, <em>don't type it</em>.</h2>
+      <p class="section-sub">Coaches told us they'd rather speak their philosophy than type it. The "How I Coach" section accepts a recording, transcribes it, and lets the coach edit. <strong>This should feel like dictating into a journal</strong> — quiet, private, no corporate "transcription complete" chrome. Used in onboarding (screen 2) and Settings (CoachContext editor) — same component, same feel, two entry points.</p>
+    </div>
+
+    <!-- 6.1 Mode toggle -->
+    <div class="sub">
+      <div class="sub-eyebrow">6.1 · Mode toggle · idle state</div>
+      <h3 class="sub-h">Type or speak — pill toggle, single prompt</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">"How I Coach" · idle · onboarding screen 2</div>
+      <div class="dict-frame">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-quiet);margin-bottom:8px">How the room works for you</div>
+        <p class="dict-prompt">When you walk into a session, <em>what's the first thing you're listening for</em>? What's the room you try to make?</p>
+
+        <div class="dict-mode-toggle">
+          <button><i data-lucide="type"></i>Type</button>
+          <button class="on"><i data-lucide="mic"></i>Speak</button>
+        </div>
+
+        <div class="dict-stage">
+          <div class="dict-mic"><i data-lucide="mic"></i></div>
+          <p class="dict-cta">Tap to start. Talk for as long as you'd like — <em>two minutes, ten minutes</em>.</p>
+          <div class="dict-hint">⌘ Space to start &amp; stop · Esc to cancel</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--paper-soft);border-radius:6px;font-family:'Newsreader',serif;font-size:13.5px;font-style:italic;color:var(--ink-mute);line-height:1.55">
+          <i data-lucide="lightbulb" style="width:16px;height:16px;color:var(--gold);flex-shrink:0"></i>
+          <span>Most coaches find that speaking surfaces things that typing doesn't. There's no penalty for restarting — we keep the last take.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6.2 Recording -->
+    <div class="sub">
+      <div class="sub-eyebrow">6.2 · Recording state</div>
+      <h3 class="sub-h">Live waveform, timer, calm pulse</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">"How I Coach" · recording · 1m 24s in</div>
+      <div class="dict-frame">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-quiet);margin-bottom:8px">How the room works for you</div>
+        <p class="dict-prompt">When you walk into a session, <em>what's the first thing you're listening for</em>? What's the room you try to make?</p>
+
+        <div class="dict-mode-toggle">
+          <button><i data-lucide="type"></i>Type</button>
+          <button class="on"><i data-lucide="mic"></i>Speak</button>
+        </div>
+
+        <div class="dict-stage" style="background:#fff8f8;border-color:#fecaca;border-style:solid">
+          <div class="dict-mic recording"><i data-lucide="mic"></i></div>
+          <div class="dict-waveform">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="dict-timer">01:24</div>
+          <p class="dict-cta" style="margin-top:8px">Listening · keep going.</p>
+          <div class="dict-hint">⌘ Space to stop · Esc to discard</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · recording state</div>
+      Mic button: 88×88 circle, fills <code>#dc2626</code> when recording, animated 1.6s pulse ring (12→24px). Waveform: 12 bars, 3px wide, <code>coaching-500</code> color, animated independent staggered heights 8→36px (genuine audio amplitude when supported, fake-but-believable otherwise — never a flat shimmer; that reads as "loading" not "listening"). Timer: JetBrains Mono 22px tabular-nums. Stage tints to <code>#fff8f8</code>. CTA copy stays warm — <em>"Listening · keep going"</em>, never "Recording in progress."
+    </div>
+
+    <!-- 6.3 Transcript review -->
+    <div class="sub">
+      <div class="sub-eyebrow">6.3 · Transcription preview · editable</div>
+      <h3 class="sub-h">Speak ends → text appears, attributed and editable</h3>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-label">"How I Coach" · post-recording · review</div>
+      <div class="dict-frame">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-quiet);margin-bottom:8px">How the room works for you</div>
+        <p class="dict-prompt">When you walk into a session, <em>what's the first thing you're listening for</em>? What's the room you try to make?</p>
+
+        <div class="dict-transcript">
+          <div class="dict-transcript-attribution"><i data-lucide="mic"></i>Transcribed from 2m 14s of audio · April 23</div>
+          <div class="dict-transcript-body">The first thing I'm listening for is whether the client is in their <em>head</em> or in their body. Most senior leaders walk in cocked — they've already structured what they want to talk about, and that structure is usually a defense. So my job, in the first ten minutes, is to <em>not</em> let them lead with it. I'll ask a body question — "where are you right now, before we start" — and the room I try to make is one where it's safe to not have an answer.</div>
+          <div class="dict-transcript-actions">
+            <button class="prim"><i data-lucide="check"></i>Looks right</button>
+            <button><i data-lucide="edit-3"></i>Edit</button>
+            <button><i data-lucide="rotate-ccw"></i>Re-record</button>
+            <button><i data-lucide="x"></i>Discard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · transcript card</div>
+      Card: 4px radius, 1px <code>--line-soft</code> border, white bg, <code>0 1px 0 --line</code> shadow (matches journal cards). <strong>Attribution row</strong>: JetBrains Mono 9.5/700 uppercase teal — explicitly says "Transcribed from Xm Ys of audio · date" so the coach knows this is their voice, parsed. <strong>Body</strong>: Newsreader 16/1.65 — same as a thread reflection. Highlighted phrases (italic + faint teal bg) are <em>auto-flagged emphasis</em> from the audio (volume, pause-before, repetition). Coach can click to remove emphasis. <strong>Actions</strong>: 4 buttons — accept, edit (inline), re-record (replaces), discard (returns to mode toggle).
+    </div>
+
+    <!-- 6.4 Two placements -->
+    <div class="sub">
+      <div class="sub-eyebrow">6.4 · Two placements · same component</div>
+      <h3 class="sub-h">Onboarding screen 2 · Settings → CoachContext</h3>
+    </div>
+
+    <div class="spec-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Surface</th>
+            <th>Default mode</th>
+            <th>What's around it</th>
+            <th>Save behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Onboarding · screen 2</strong></td>
+            <td>Speak (recommended), Type fallback</td>
+            <td>Three other journal cards (frameworks, edge, watch-for). Sticky progress bar at top.</td>
+            <td>Auto-saves on accept. Continue button activates after at least one section is filled.</td>
+          </tr>
+          <tr>
+            <td><strong>Settings → CoachContext</strong></td>
+            <td>Type (default), Speak available</td>
+            <td>The full living CoachContext editor — versioned. Speak is exposed per-section.</td>
+            <td>Each speak-then-accept commits a new minor version (<code>v0.4 → v0.5</code>). Edits to existing text don't.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="lab">Annotation · why default differs</div>
+      In onboarding, the coach hasn't typed yet — Speak is the inviting path, Type is the "I'd rather not" fallback. In Settings, the coach is editing existing text — Type is the natural mode, Speak is the "let me re-do this section out loud" affordance. Same component, different default. Persists per-coach in <code>User.uiPrefs.dictationDefault</code>.
+    </div>
+
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════════════ -->
+  <div class="doc-foot">
+    <p>This document is a <strong style="font-style:normal">spec</strong>, not a ship target. Implementation lives in <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--coaching-700)">coachclaude2</code> per <code style="font-family:'JetBrains Mono',monospace;font-size:13px;font-style:normal;background:var(--paper-deep);padding:1px 5px;border-radius:3px;color:var(--coaching-700)">DESIGN_HANDOFF.md</code> guardrails — no shadcn Card/Badge substitution, serif for content, mono for labels, warm parchment palette, page-card shadows. Tag Dan with questions; copy and tone are deliberate.</p>
+  </div>
+
+</div>
+
+<script>
+  if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>
